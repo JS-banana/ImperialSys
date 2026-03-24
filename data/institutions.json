@@ -1,0 +1,360 @@
+{
+  "institutions": [
+    {
+      "id": "emperor",
+      "name": "皇帝",
+      "shortName": "帝",
+      "category": "central",
+      "level": 1,
+      "summary": "明朝最高统治者，集军政大权于一身",
+      "established": "1368",
+      "detail": {
+        "functions": [
+          { "icon": "👑", "title": "最高决策权", "description": "对一切军国大事拥有最终裁决权，臣下无可置疑" },
+          { "icon": "📜", "title": "批红权", "description": "通过司礼监代行批红，正式确认内阁票拟意见" },
+          { "icon": "⚔️", "title": "军事统帅", "description": "掌握最高军事指挥权，五军都督府听命于皇帝" },
+          { "icon": "🔍", "title": "特务监控", "description": "直接掌握锦衣卫与东厂，监视臣民，维护皇权" }
+        ],
+        "structure": "明太祖朱元璋于1380年以胡惟庸案为由废除丞相制度，将权力直接集中于皇帝之手。此后皇帝通过内阁辅政，但最终决策权始终属于皇帝本人。皇帝勤政时直接批阅奏章，怠政时则委任内阁票拟、司礼监批红。",
+        "internalOrgs": []
+      },
+      "position": { "x": 500, "y": 50 }
+    },
+    {
+      "id": "cabinet",
+      "name": "内阁",
+      "shortName": "阁",
+      "category": "central",
+      "level": 2,
+      "summary": "皇帝顾问与中枢辅政机构，行使「票拟」权",
+      "established": "1402",
+      "detail": {
+        "functions": [
+          { "icon": "✍️", "title": "票拟", "description": "对百官奏章提出处理意见，用小票贴于奏章之上，供皇帝参考" },
+          { "icon": "📋", "title": "草拟诏令", "description": "负责起草皇帝的各类诏书、敕令、制书" },
+          { "icon": "🏛️", "title": "统领行政", "description": "内阁首辅实际主持朝政，六部官员须向内阁汇报重要事务" },
+          { "icon": "📚", "title": "顾问咨询", "description": "为皇帝提供治国建议，参与重大决策讨论" }
+        ],
+        "structure": "内阁由大学士组成，人数不定（通常2-7人）。首辅为内阁领袖，权力最大；次辅、群辅次之。大学士均加衔于翰林院，名义上只是皇帝秘书，实际权力随皇帝勤怠程度而变化。",
+        "internalOrgs": [
+          { "name": "首辅", "desc": "内阁首席大学士，实际执掌朝政，权力最重" },
+          { "name": "次辅", "desc": "内阁次席大学士，协助首辅处理政务" },
+          { "name": "群辅", "desc": "其余内阁大学士，参与票拟等事务" }
+        ]
+      },
+      "position": { "x": 250, "y": 220 }
+    },
+    {
+      "id": "silijian",
+      "name": "司礼监",
+      "shortName": "司礼",
+      "category": "central",
+      "level": 2,
+      "summary": "宦官掌控的内廷机构，代皇帝行使「批红」权",
+      "established": "1370",
+      "detail": {
+        "functions": [
+          { "icon": "🔴", "title": "批红", "description": "代皇帝用红笔批示内阁票拟，正式赋予旨意效力" },
+          { "icon": "📬", "title": "传达内外", "description": "沟通内廷与外朝，传递皇帝旨意" },
+          { "icon": "📖", "title": "文书管理", "description": "管理宫内文书档案，掌握大量机密信息" },
+          { "icon": "🕵️", "title": "监控东厂", "description": "提督太监直接掌管东厂特务机构" }
+        ],
+        "structure": "司礼监是宫廷二十四衙门之首。设掌印太监1人（地位最高）、秉笔太监数人（负责批红）。明中后期宦官专权时，掌印太监权力有时凌驾于内阁首辅之上，形成「内相」之称。",
+        "internalOrgs": [
+          { "name": "掌印太监", "desc": "司礼监最高长官，掌管皇帝印信，地位相当于内阁首辅" },
+          { "name": "秉笔太监", "desc": "代皇帝批红，负责日常奏章处理" },
+          { "name": "随堂太监", "desc": "协助处理日常事务" }
+        ]
+      },
+      "position": { "x": 750, "y": 220 }
+    },
+    {
+      "id": "libu",
+      "name": "吏部",
+      "shortName": "吏",
+      "category": "administrative",
+      "level": 3,
+      "summary": "六部之首，掌管全国文官铨选、考核、升降",
+      "established": "1368",
+      "detail": {
+        "functions": [
+          { "icon": "👔", "title": "铨选官员", "description": "负责全国文官的选拔、任用、调配" },
+          { "icon": "📊", "title": "考核官员", "description": "主持官员政绩考核，三年一次大计" },
+          { "icon": "⬆️", "title": "升降黜陟", "description": "根据考核结果决定官员升迁、降调或免职" },
+          { "icon": "🎖️", "title": "封赠官职", "description": "处理致仕官员及其家属的封赠事务" }
+        ],
+        "structure": "吏部设尚书1人（正二品）、左右侍郎各1人（正三品），下设文选清吏司、验封清吏司、稽勋清吏司、考功清吏司四司。",
+        "internalOrgs": [
+          { "name": "文选清吏司", "desc": "掌管官员的选授、升调" },
+          { "name": "验封清吏司", "desc": "掌管官员封爵、袭荫等事" },
+          { "name": "稽勋清吏司", "desc": "掌管官员勋级、功绩审核" },
+          { "name": "考功清吏司", "desc": "掌管官员考核评定" }
+        ]
+      },
+      "position": { "x": 70, "y": 400 }
+    },
+    {
+      "id": "hubu",
+      "name": "户部",
+      "shortName": "户",
+      "category": "administrative",
+      "level": 3,
+      "summary": "掌管全国户籍、土地、赋税、财政收支",
+      "established": "1368",
+      "detail": {
+        "functions": [
+          { "icon": "📋", "title": "户籍管理", "description": "掌管全国户口登记与黄册（户籍册）编制" },
+          { "icon": "🌾", "title": "赋税征收", "description": "负责田赋、丁税等各类税收的征收与管理" },
+          { "icon": "💰", "title": "财政管理", "description": "掌管国家财政收支，管理太仓（国库）" },
+          { "icon": "🗺️", "title": "土地管理", "description": "掌管全国土地丈量、登记，主持鱼鳞图册编制" }
+        ],
+        "structure": "户部设尚书1人、左右侍郎各1人，下设十三清吏司（对应各省），另有宝钞提举司、钞纸局等附属机构。",
+        "internalOrgs": [
+          { "name": "十三清吏司", "desc": "对应全国十三省，分管各省财政户籍事务" },
+          { "name": "太仓", "desc": "中央国库，存储银两、粮食等物资" }
+        ]
+      },
+      "position": { "x": 230, "y": 400 }
+    },
+    {
+      "id": "libu2",
+      "name": "礼部",
+      "shortName": "礼",
+      "category": "administrative",
+      "level": 3,
+      "summary": "掌管礼仪、祭祀、教育、科举及外交事务",
+      "established": "1368",
+      "detail": {
+        "functions": [
+          { "icon": "🎭", "title": "礼仪制度", "description": "制定并主持朝廷各类典礼、仪式" },
+          { "icon": "🏛️", "title": "祭祀事务", "description": "主持天地、宗庙、社稷等国家祭祀活动" },
+          { "icon": "📝", "title": "科举主持", "description": "主持会试等科举考试，选拔人才" },
+          { "icon": "🌏", "title": "外交接待", "description": "负责接待外国使臣，管理朝贡事务" }
+        ],
+        "structure": "礼部设尚书1人、左右侍郎各1人，下设仪制清吏司、祠祭清吏司、主客清吏司、精膳清吏司四司。",
+        "internalOrgs": [
+          { "name": "仪制清吏司", "desc": "掌管吉礼、嘉礼等礼仪制度" },
+          { "name": "祠祭清吏司", "desc": "掌管国家祭祀事务" },
+          { "name": "主客清吏司", "desc": "掌管外交、朝贡事务" }
+        ]
+      },
+      "position": { "x": 390, "y": 400 }
+    },
+    {
+      "id": "bingbu",
+      "name": "兵部",
+      "shortName": "兵",
+      "category": "administrative",
+      "level": 3,
+      "summary": "掌管武官选拔、军队调动、军事行政",
+      "established": "1368",
+      "detail": {
+        "functions": [
+          { "icon": "⚔️", "title": "武官铨选", "description": "负责武官的选拔、任用和考核" },
+          { "icon": "🗺️", "title": "军事部署", "description": "掌管军队调动令符，协调各地军事部署" },
+          { "icon": "🏰", "title": "边防管理", "description": "负责边疆防御事务，管理各边镇" },
+          { "icon": "📜", "title": "军政文书", "description": "处理军事行政文书，管理卫所制度" }
+        ],
+        "structure": "兵部设尚书1人、左右侍郎各1人，下设武选清吏司、职方清吏司、车驾清吏司、武库清吏司四司。注：兵部掌军政，五军都督府掌军令，二者相互制衡。",
+        "internalOrgs": [
+          { "name": "武选清吏司", "desc": "掌管武官选拔与升降" },
+          { "name": "职方清吏司", "desc": "掌管地图、要塞、军队编制" },
+          { "name": "车驾清吏司", "desc": "掌管驿传、仪仗" },
+          { "name": "武库清吏司", "desc": "掌管兵器制造与储存" }
+        ]
+      },
+      "position": { "x": 550, "y": 400 }
+    },
+    {
+      "id": "xingbu",
+      "name": "刑部",
+      "shortName": "刑",
+      "category": "administrative",
+      "level": 3,
+      "summary": "掌管全国刑狱、司法审判，与大理寺、都察院共组「三法司」",
+      "established": "1368",
+      "detail": {
+        "functions": [
+          { "icon": "⚖️", "title": "刑事审判", "description": "负责审理全国重大刑事案件" },
+          { "icon": "📜", "title": "律法颁行", "description": "参与制定和解释《大明律》等法律条文" },
+          { "icon": "🔗", "title": "囚犯管理", "description": "管理全国监狱，负责囚犯羁押" },
+          { "icon": "🤝", "title": "三司会审", "description": "与大理寺、都察院共同审理重大案件" }
+        ],
+        "structure": "刑部设尚书1人、左右侍郎各1人，下设十三清吏司（对应各省刑事事务）及司狱司。",
+        "internalOrgs": [
+          { "name": "十三清吏司", "desc": "分省管理刑事案件复核" },
+          { "name": "司狱司", "desc": "管理刑部所属监狱" }
+        ]
+      },
+      "position": { "x": 710, "y": 400 }
+    },
+    {
+      "id": "gongbu",
+      "name": "工部",
+      "shortName": "工",
+      "category": "administrative",
+      "level": 3,
+      "summary": "掌管全国工程建设、水利、工匠及军械制造",
+      "established": "1368",
+      "detail": {
+        "functions": [
+          { "icon": "🏗️", "title": "工程建设", "description": "主持宫殿、陵寝、城墙等重大工程建设" },
+          { "icon": "💧", "title": "水利兴修", "description": "负责运河疏浚、黄河治理等水利工程" },
+          { "icon": "🔧", "title": "工匠管理", "description": "管理全国工匠，征发徭役" },
+          { "icon": "🗡️", "title": "军械制造", "description": "监督火器、兵器等军事装备的制造" }
+        ],
+        "structure": "工部设尚书1人、左右侍郎各1人，下设营缮清吏司、虞衡清吏司、都水清吏司、屯田清吏司四司。",
+        "internalOrgs": [
+          { "name": "营缮清吏司", "desc": "掌管宫室、陵寝等营建事务" },
+          { "name": "虞衡清吏司", "desc": "掌管山林、工匠、军械" },
+          { "name": "都水清吏司", "desc": "掌管水利、桥梁、道路" },
+          { "name": "屯田清吏司", "desc": "掌管军屯、民屯事务" }
+        ]
+      },
+      "position": { "x": 870, "y": 400 }
+    },
+    {
+      "id": "duchayuan",
+      "name": "都察院",
+      "shortName": "都察",
+      "category": "supervisory",
+      "level": 3,
+      "summary": "全国最高监察机构，负责弹劾百官、稽查违法",
+      "established": "1382",
+      "detail": {
+        "functions": [
+          { "icon": "👁️", "title": "监察弹劾", "description": "监察百官行为，对违法官员提出弹劾" },
+          { "icon": "🔍", "title": "巡按地方", "description": "派遣御史巡按各省，纠察地方官员" },
+          { "icon": "⚖️", "title": "参与司法", "description": "参与三司会审，监督司法公正" },
+          { "icon": "📢", "title": "言事进谏", "description": "御史有权对皇帝直言进谏，风闻奏事" }
+        ],
+        "structure": "都察院设左右都御史（正二品）、左右副都御史、左右佥都御史，下设十三道监察御史，负责监察对应省份的官员。御史官品虽低（正七品），但权力极大，可弹劾任何官员。",
+        "internalOrgs": [
+          { "name": "左都御史", "desc": "都察院最高长官，主持全院事务" },
+          { "name": "十三道监察御史", "desc": "对应十三省，负责地方巡按监察" }
+        ]
+      },
+      "position": { "x": 120, "y": 590 }
+    },
+    {
+      "id": "dalisi",
+      "name": "大理寺",
+      "shortName": "大理",
+      "category": "supervisory",
+      "level": 3,
+      "summary": "最高司法复核机构，负责审查刑部判决，参与三司会审",
+      "established": "1368",
+      "detail": {
+        "functions": [
+          { "icon": "🔄", "title": "复核判决", "description": "复核刑部及各地上报的重大案件判决" },
+          { "icon": "🤝", "title": "三司会审", "description": "与刑部、都察院共同审理重大、疑难案件" },
+          { "icon": "📜", "title": "录囚平反", "description": "定期审查在押囚犯，对冤假错案予以平反" },
+          { "icon": "⚖️", "title": "法律解释", "description": "参与重要法律条文的解释和适用" }
+        ],
+        "structure": "大理寺设卿1人（正三品）、少卿2人，下设左右寺，各有寺丞、评事等官员。大理寺是三法司之一，专司司法复核，不初审案件。",
+        "internalOrgs": [
+          { "name": "大理寺卿", "desc": "大理寺最高长官，主持复核工作" },
+          { "name": "左右寺", "desc": "分别处理不同性质的案件复核" }
+        ]
+      },
+      "position": { "x": 350, "y": 590 }
+    },
+    {
+      "id": "tongzhengsi",
+      "name": "通政司",
+      "shortName": "通政",
+      "category": "supervisory",
+      "level": 3,
+      "summary": "奏章收发传达机构，是百官与皇帝之间的文书枢纽",
+      "established": "1370",
+      "detail": {
+        "functions": [
+          { "icon": "📬", "title": "奏章收发", "description": "统一收受全国各地奏章，转呈皇帝或内阁" },
+          { "icon": "🔔", "title": "通报紧急", "description": "对紧急军情、重要政务优先传达" },
+          { "icon": "📋", "title": "文书登记", "description": "对所有奏章进行登记、分类、存档" },
+          { "icon": "🚫", "title": "封还权", "description": "对不合规程的奏章有权封还，不予转呈" }
+        ],
+        "structure": "通政司设通政使1人（正三品）、左右通政各1人，另有参议等官员。通政司控制奏章通道，对信息流通有重要影响力。",
+        "internalOrgs": [
+          { "name": "通政使", "desc": "通政司最高长官" },
+          { "name": "左右通政", "desc": "协助通政使处理文书事务" }
+        ]
+      },
+      "position": { "x": 580, "y": 590 }
+    },
+    {
+      "id": "wujun",
+      "name": "五军都督府",
+      "shortName": "都督府",
+      "category": "military",
+      "level": 3,
+      "summary": "最高军事指挥机构，掌军令，与兵部相互制衡",
+      "established": "1380",
+      "detail": {
+        "functions": [
+          { "icon": "🏯", "title": "统领卫所", "description": "统辖全国各卫所军队，负责日常训练管理" },
+          { "icon": "📋", "title": "军籍管理", "description": "掌管军队编制、军籍档案" },
+          { "icon": "⚔️", "title": "军事训练", "description": "负责军队日常操练和战备" },
+          { "icon": "🔄", "title": "与兵部制衡", "description": "五军都督府有兵权但无发兵权，兵部有发兵权但无统兵权" }
+        ],
+        "structure": "五军都督府分为中、左、右、前、后五府，每府设左右都督（正一品）。五军都督府掌军籍和平时管理，但出征须由皇帝任命总兵官，平时发兵须经兵部审批，形成相互制约。",
+        "internalOrgs": [
+          { "name": "中军都督府", "desc": "统辖京师及直隶地区卫所" },
+          { "name": "左军都督府", "desc": "统辖山东、辽东等地卫所" },
+          { "name": "右军都督府", "desc": "统辖陕西、四川等地卫所" },
+          { "name": "前军都督府", "desc": "统辖河南、湖广等地卫所" },
+          { "name": "后军都督府", "desc": "统辖浙江、福建等地卫所" }
+        ]
+      },
+      "position": { "x": 810, "y": 590 }
+    },
+    {
+      "id": "jinyiwei",
+      "name": "锦衣卫",
+      "shortName": "锦衣",
+      "category": "secret",
+      "level": 4,
+      "summary": "皇帝直属特务机构，掌侦察、逮捕、秘密审讯，设镇抚司",
+      "established": "1382",
+      "detail": {
+        "functions": [
+          { "icon": "🕵️", "title": "侦察监视", "description": "监视百官、皇族成员乃至普通百姓的言行" },
+          { "icon": "🔒", "title": "逮捕审讯", "description": "可不经司法程序直接逮捕人员，在诏狱中秘密审讯" },
+          { "icon": "👮", "title": "仪仗护卫", "description": "担任皇帝仪仗队和贴身护卫" },
+          { "icon": "📜", "title": "执行密令", "description": "执行皇帝秘密旨意，可先斩后奏" }
+        ],
+        "structure": "锦衣卫设指挥使1人（正三品），下设镇抚司（含南北两所），其中北镇抚司专理诏狱，直接对皇帝负责，不受普通司法管辖。",
+        "internalOrgs": [
+          { "name": "指挥使", "desc": "锦衣卫最高长官" },
+          { "name": "北镇抚司", "desc": "专理诏狱（皇帝直属监狱），可绕过三法司" },
+          { "name": "南镇抚司", "desc": "负责锦衣卫内部纪律" }
+        ]
+      },
+      "position": { "x": 300, "y": 770 }
+    },
+    {
+      "id": "dongchang",
+      "name": "东厂",
+      "shortName": "东厂",
+      "category": "secret",
+      "level": 4,
+      "summary": "宦官主导的特务机构，监视锦衣卫及百官，由司礼监太监提督",
+      "established": "1420",
+      "detail": {
+        "functions": [
+          { "icon": "👁️", "title": "监视百官", "description": "监视包括锦衣卫在内的所有官员和百姓" },
+          { "icon": "🕵️", "title": "秘密逮捕", "description": "可秘密逮捕并审讯嫌疑人员" },
+          { "icon": "📋", "title": "情报汇报", "description": "直接向皇帝汇报情报，不经任何中间环节" },
+          { "icon": "⚖️", "title": "监控锦衣卫", "description": "东厂权力凌驾于锦衣卫之上，可监察锦衣卫的活动" }
+        ],
+        "structure": "东厂由司礼监掌印或秉笔太监提督，下设掌刑千户、理刑百户等职。东厂番子（特工）无处不在，连锦衣卫的行动也在监视之下。",
+        "internalOrgs": [
+          { "name": "提督太监", "desc": "东厂最高长官，由司礼监太监兼任" },
+          { "name": "掌刑千户", "desc": "负责逮捕审讯事务" },
+          { "name": "番役", "desc": "东厂特务人员，分布全国各地" }
+        ]
+      },
+      "position": { "x": 700, "y": 770 }
+    }
+  ]
+}

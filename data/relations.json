@@ -1,0 +1,180 @@
+{
+  "relations": [
+    {
+      "id": "r_emp_cabinet",
+      "source": "emperor",
+      "target": "cabinet",
+      "type": "command",
+      "label": "统辖",
+      "description": "皇帝任命大学士入阁，内阁对皇帝负责。皇帝勤政时亲批奏章，怠政时由内阁票拟后由司礼监代为批红。"
+    },
+    {
+      "id": "r_emp_sili",
+      "source": "emperor",
+      "target": "silijian",
+      "type": "direct",
+      "label": "直属",
+      "description": "司礼监是皇帝的内廷秘书机构，掌印太监由皇帝亲信宦官担任，直接对皇帝负责，不受外朝干预。"
+    },
+    {
+      "id": "r_emp_jinyi",
+      "source": "emperor",
+      "target": "jinyiwei",
+      "type": "direct",
+      "label": "直属",
+      "description": "锦衣卫是皇帝的私人特务机构，直接对皇帝负责，可绕过三法司对任何人实施逮捕和秘密审讯。"
+    },
+    {
+      "id": "r_emp_wujun",
+      "source": "emperor",
+      "target": "wujun",
+      "type": "command",
+      "label": "统辖",
+      "description": "五军都督府在皇帝直接统辖下管理全国卫所军队，战时由皇帝任命总兵官统兵出征。"
+    },
+    {
+      "id": "r_cabinet_sili",
+      "source": "cabinet",
+      "target": "silijian",
+      "type": "check",
+      "label": "票拟-批红 制衡",
+      "description": "内阁负责票拟（用小票写明处理意见），司礼监负责批红（代皇帝用红笔批示）。两者互相依存又互相制衡——内阁无批红权，宦官无票拟权，皇帝借此平衡内外朝势力。"
+    },
+    {
+      "id": "r_cabinet_libu",
+      "source": "cabinet",
+      "target": "libu",
+      "type": "command",
+      "label": "统辖行政",
+      "description": "内阁首辅实际统领六部，六部重要事务须向内阁请示汇报，内阁票拟意见对六部工作具有指导作用。"
+    },
+    {
+      "id": "r_cabinet_hubu",
+      "source": "cabinet",
+      "target": "hubu",
+      "type": "command",
+      "label": "统辖行政",
+      "description": "户部财政决策须经内阁票拟，重大财政改革（如张居正的一条鞭法）均需内阁主导推行。"
+    },
+    {
+      "id": "r_cabinet_libu2",
+      "source": "cabinet",
+      "target": "libu2",
+      "type": "command",
+      "label": "统辖行政",
+      "description": "礼部礼仪制度的制定须经内阁审议，科举会试主考官人选须经内阁推荐。"
+    },
+    {
+      "id": "r_cabinet_bingbu",
+      "source": "cabinet",
+      "target": "bingbu",
+      "type": "command",
+      "label": "统辖行政",
+      "description": "兵部重大军事决策须经内阁票拟，边防战略的制定由内阁主导协调。"
+    },
+    {
+      "id": "r_cabinet_xingbu",
+      "source": "cabinet",
+      "target": "xingbu",
+      "type": "command",
+      "label": "统辖行政",
+      "description": "刑部重大案件的最终处决须经内阁票拟皇帝裁决，死刑案件尤须慎重经内阁审议。"
+    },
+    {
+      "id": "r_cabinet_gongbu",
+      "source": "cabinet",
+      "target": "gongbu",
+      "type": "command",
+      "label": "统辖行政",
+      "description": "工部重大工程项目的立项、经费须经内阁审批，皇陵、宫殿修建等大工程更须内阁统筹。"
+    },
+    {
+      "id": "r_duchayuan_libu",
+      "source": "duchayuan",
+      "target": "libu",
+      "type": "supervise",
+      "label": "监察弹劾",
+      "description": "都察院御史有权监察弹劾六部官员，包括尚书、侍郎等高级官员，历史上多起六部高官被弹劾案均由都察院发起。"
+    },
+    {
+      "id": "r_duchayuan_hubu",
+      "source": "duchayuan",
+      "target": "hubu",
+      "type": "supervise",
+      "label": "监察弹劾",
+      "description": "都察院御史监察户部财政，对贪污腐败、挪用公款等行为提出弹劾。"
+    },
+    {
+      "id": "r_duchayuan_bingbu",
+      "source": "duchayuan",
+      "target": "bingbu",
+      "type": "supervise",
+      "label": "监察弹劾",
+      "description": "都察院监察兵部官员及边镇将领，对军中腐败、虚报兵额等问题进行纠察。"
+    },
+    {
+      "id": "r_duchayuan_xingbu",
+      "source": "duchayuan",
+      "target": "xingbu",
+      "type": "supervise",
+      "label": "监察弹劾",
+      "description": "都察院对刑部的司法审判进行监督，防止冤假错案，对不公正判决提出异议。"
+    },
+    {
+      "id": "r_sanjusi_cooperate",
+      "source": "duchayuan",
+      "target": "dalisi",
+      "type": "cooperate",
+      "label": "三司会审",
+      "description": "都察院、大理寺、刑部共同组成「三法司」，对重大疑难案件进行会审，三方意见共同决定最终判决，防止司法专断。"
+    },
+    {
+      "id": "r_dalisi_xingbu",
+      "source": "dalisi",
+      "target": "xingbu",
+      "type": "cooperate",
+      "label": "三司会审",
+      "description": "大理寺复核刑部判决，对量刑不当或程序违规的案件提出驳正，共同参与三司会审。"
+    },
+    {
+      "id": "r_bingbu_wujun",
+      "source": "bingbu",
+      "target": "wujun",
+      "type": "check",
+      "label": "军政-军令 制衡",
+      "description": "兵部掌军政（发兵权、武官铨选），五军都督府掌军令（统兵权、日常管理）。兵部无统兵权，都督府无发兵权，朱元璋刻意设计此制度以防武将专权。"
+    },
+    {
+      "id": "r_sili_dongchang",
+      "source": "silijian",
+      "target": "dongchang",
+      "type": "direct",
+      "label": "提督",
+      "description": "东厂由司礼监太监提督，通常由司礼监掌印或秉笔太监兼任东厂提督，宦官借此掌握最强大的特务工具。"
+    },
+    {
+      "id": "r_dongchang_jinyi",
+      "source": "dongchang",
+      "target": "jinyiwei",
+      "type": "supervise",
+      "label": "监控制衡",
+      "description": "东厂权力高于锦衣卫，可监视锦衣卫的行动，锦衣卫指挥使须向东厂汇报工作。权宦魏忠贤执政时，锦衣卫完全听命于东厂。"
+    },
+    {
+      "id": "r_tongzheng_cabinet",
+      "source": "tongzhengsi",
+      "target": "cabinet",
+      "type": "cooperate",
+      "label": "奏章传递",
+      "description": "通政司收受奏章后，将内容摘要呈皇帝，同时将奏章本体转发内阁票拟，是外朝奏章进入决策流程的必经环节。"
+    },
+    {
+      "id": "r_duchayuan_cabinet",
+      "source": "duchayuan",
+      "target": "cabinet",
+      "type": "supervise",
+      "label": "弹劾进谏",
+      "description": "御史有权弹劾包括内阁大学士在内的所有官员，历史上多位首辅因御史弹劾而被迫去职。"
+    }
+  ]
+}

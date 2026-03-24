@@ -1,0 +1,121 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-body);
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-heading: var(--font-display);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+  --color-sidebar-ring: var(--ring);
+  --color-sidebar-border: var(--border);
+  --color-sidebar-accent-foreground: var(--foreground);
+  --color-sidebar-accent: var(--muted);
+  --color-sidebar-primary-foreground: #fffaf2;
+  --color-sidebar-primary: var(--primary);
+  --color-sidebar-foreground: var(--foreground);
+  --color-sidebar: var(--card);
+  --color-chart-1: var(--primary);
+  --color-chart-2: #8b4d8b;
+  --color-chart-3: #2b6cb0;
+  --color-chart-4: #2e7d32;
+  --color-chart-5: #8b2500;
+  --color-ring: var(--ring);
+  --color-input: var(--border);
+  --color-border: var(--border);
+  --color-destructive: #b44333;
+  --color-accent-foreground: var(--foreground);
+  --color-accent: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--foreground);
+  --color-popover: var(--card);
+  --color-card-foreground: var(--foreground);
+  --color-card: var(--card);
+}
+
+:root {
+  --font-body: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+  --font-display: "Songti SC", "STSong", "Noto Serif CJK SC", "Source Han Serif SC", "PMingLiU", serif;
+  --paper: #f5f0e8;
+  --paper-dark: #ede5d8;
+  --paper-bright: #fffaf2;
+  --ink-strong: #2c2c2c;
+  --ink-muted: #51463e;
+  --ink-subtle: #7c6d5f;
+  --vermilion: #c0392b;
+  --vermillion: #c0392b;
+  --vermillion-wash: rgba(192, 57, 43, 0.08);
+  --gold: #b8860b;
+  --background: var(--paper);
+  --foreground: var(--ink-strong);
+  --card: rgba(255, 255, 255, 0.72);
+  --card-foreground: var(--ink-strong);
+  --popover: rgba(255, 251, 244, 0.98);
+  --popover-foreground: var(--ink-strong);
+  --primary: var(--vermilion);
+  --primary-foreground: #fff6f1;
+  --secondary: rgba(184, 134, 11, 0.08);
+  --secondary-foreground: var(--ink-strong);
+  --muted: rgba(44, 44, 44, 0.05);
+  --muted-foreground: var(--ink-subtle);
+  --accent: rgba(184, 134, 11, 0.08);
+  --accent-foreground: var(--ink-strong);
+  --destructive: #b44333;
+  --border: rgba(68, 50, 31, 0.12);
+  --input: rgba(68, 50, 31, 0.12);
+  --ring: rgba(192, 57, 43, 0.34);
+  --radius: 0.75rem;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans;
+    background: var(--paper);
+  }
+  body {
+    @apply bg-background text-foreground;
+    min-height: 100vh;
+    background-image:
+      radial-gradient(circle at top, rgba(184, 134, 11, 0.14), transparent 34%),
+      linear-gradient(180deg, rgba(255, 251, 244, 0.84), rgba(245, 240, 232, 0.98));
+    color: var(--ink-strong);
+  }
+
+  ::selection {
+    background: rgba(192, 57, 43, 0.16);
+    color: var(--ink-strong);
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border: 2px solid transparent;
+    border-radius: 999px;
+    background: rgba(81, 70, 62, 0.28);
+    background-clip: padding-box;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
