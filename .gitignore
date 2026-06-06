@@ -51,3 +51,4 @@ out/
 .vercel/
 *.log
 .env*
+.omx/
