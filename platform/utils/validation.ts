@@ -67,6 +67,7 @@ export const TimelineEventSchema = z.strictObject({
 
 // ─── Figure ──────────────────────────────────────────────────────────
 
+// figure：人物升一等原子（扁平数组 + institutionIds 多对多，取代旧 Record<instId, Figure[]>）。
 export const FigureSchema = z.strictObject({
   id: z.string().min(1),
   name: z.string(),
@@ -75,6 +76,7 @@ export const FigureSchema = z.strictObject({
   evaluation: z.string(),
   story: z.string(),
   tags: z.array(z.string()).min(1),
+  institutionIds: z.array(z.string().min(1)).min(1),
 });
 
 // ─── 外链 / 深度契约（ADR-0006）─────────────────────────────────────
@@ -188,7 +190,7 @@ export const DynastyDataSchema = z
     institutions: z.array(InstitutionSchema),
     relations: z.array(RelationSchema),
     timelines: z.record(z.string(), z.array(TimelineEventSchema)),
-    figures: z.record(z.string(), z.array(FigureSchema)),
+    figures: z.array(FigureSchema),
     events: z.array(EventAtomSchema).default([]),
     concepts: z.array(ConceptAtomSchema).default([]),
   })
@@ -212,9 +214,7 @@ export const DynastyDataSchema = z
     // 全原子注册表：互链 AtomRef "type:id" 须命中其一（institution/figure/event/concept）
     const atomRefs = new Set<string>([
       ...data.institutions.map((i) => `institution:${i.id}`),
-      ...Object.values(data.figures)
-        .flat()
-        .map((f) => `figure:${f.id}`),
+      ...data.figures.map((f) => `figure:${f.id}`),
       ...data.events.map((e) => `event:${e.id}`),
       ...data.concepts.map((c) => `concept:${c.id}`),
     ]);
@@ -248,23 +248,12 @@ export const DynastyDataSchema = z
       }
     }
 
-    // 检查 figure key 是否指向有效机构
-    for (const key of Object.keys(data.figures)) {
-      if (!institutionIds.has(key)) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: `figures 的键 "${key}" 不是有效的机构 ID（有效 ID: ${[...institutionIds].join(', ')})`,
-          path: ['figures', key],
-        });
-      }
-    }
-
-    // 内容原子（event / concept）统一校验：id 同类型唯一 + institutionIds 指向存在机构
+    // 内容原子（figure / event / concept）统一校验：id 同类型唯一 + institutionIds 指向存在机构
     // + links 命中全原子注册表。新增原子类型时复用此函数即可。
     const checkAtomRefs = (
       atoms: ReadonlyArray<{ id: string; institutionIds: string[]; links?: string[] }>,
       labelCn: string,
-      key: 'events' | 'concepts',
+      key: 'figures' | 'events' | 'concepts',
     ) => {
       const seen = new Set<string>();
       atoms.forEach((atom, index) => {
@@ -299,6 +288,7 @@ export const DynastyDataSchema = z
       });
     };
 
+    checkAtomRefs(data.figures, '人物', 'figures');
     checkAtomRefs(data.events, '事件', 'events');
     checkAtomRefs(data.concepts, '概念', 'concepts');
   });

@@ -8,7 +8,7 @@ export interface DataSource {
   institutions: Institution[];
   relations: Relation[];
   timelines: Record<string, TimelineEvent[]>;
-  figures: Record<string, Figure[]>;
+  figures: Figure[];
 }
 
 // ─── 创建数据查询工具（工厂模式，支持任意数据源）────────────────
@@ -94,7 +94,8 @@ export function createDataHelpers(source: DataSource) {
     },
 
     getFigures(institutionId: string): Figure[] {
-      return source.figures[institutionId] ?? [];
+      // 扁平原子按 institutionIds 多对多过滤派生（签名不变；同一人物可属多机构）
+      return source.figures.filter((figure) => figure.institutionIds.includes(institutionId));
     },
 
     getDataSource(): DataSource {

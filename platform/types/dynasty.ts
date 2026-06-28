@@ -80,7 +80,7 @@ export interface DynastyRawData {
   institutions: Institution[];
   relations: Relation[];
   timelines: Record<string, TimelineEvent[]>;
-  figures: Record<string, Figure[]>;
+  figures: Figure[];
 }
 
 // ─── 朝代数据包（Server -> Client 传递用，可序列化）────────────

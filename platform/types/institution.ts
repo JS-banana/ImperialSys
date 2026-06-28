@@ -46,7 +46,7 @@ export interface TimelineEvent {
   description: string;
 }
 
-// 人物
+// 人物（一等原子：扁平数组 + institutionIds 多对多）
 export interface Figure {
   id: string;
   name: string;
@@ -55,4 +55,5 @@ export interface Figure {
   evaluation: string;
   story: string;
   tags: string[];
+  institutionIds: string[];
 }

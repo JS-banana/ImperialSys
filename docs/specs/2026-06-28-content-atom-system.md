@@ -21,7 +21,7 @@
 | **L2 深读寻址** | **两层解耦**（用户拍板）：`?atom=type:id` 只复原 **L1**；L2 全屏深读是**独立瞬时态**，由 L1 抽屉内「深读 ↗」按钮触发，**不进 URL**。 | L1/L2 职责清晰、URL 只承载一层选中态、深链接行为可预测；放弃「分享直达 L2」换简单与可预测。 |
 | **外链校验** | **强白名单**（用户拍板）：`ExternalRef.source∈{wikipedia,baidu,ctext,other}`；superRefine 校验 URL host 与 source 一致（`wikipedia→*.wikipedia.org`、`baidu→baike.baidu.com`、`ctext→ctext.org`），`other` 仅允许 https。 | 把 ADR-0006「权威源」固化成构建期硬门，与全原子注册表同处。 |
 | **深链接迁移** | **一次性切换** `?institution=` → `?atom=type:id`，删旧读写。 | 站点未发布（dev 未 push、无外部链接），无历史链接需兼容；YAGNI。 |
-| **figure 形态** | `figures: Record<instId, Figure[]>` → **扁平 `Figure[]` + `institutionIds[]` 多对多**；`getFigures(instId)` 由 `.filter(f=>f.institutionIds.includes(instId))` 派生，**签名不变**，`FiguresTab` 零改。 | 现数据无重复，但 Record 形态无法表达跨机构 figure（如王振跨司礼监+土木堡）；扁平原子解锁多对多，避免未来复制。 |
+| **figure 形态** | `figures: Record<instId, Figure[]>` → **扁平 `Figure[]` + `institutionIds[]` 多对多**；`getFigures(instId)` 由 `.filter(f=>f.institutionIds.includes(instId))` 派生，**签名不变**，`FiguresTab` 零改。 | ⚠️ 校实修正：现数据**有**隐性重复——用合成 id 后缀（`wang_zhen_dongchang`/`wei_zhongxian_dc`/`yu_qian_bingbu`）变相复制了同一人（于谦/王振/魏忠贤），因 Record 无法表达跨机构 figure。② **合并这 3 人**为多机构原子（drop 桩 + union institutionIds + **零内容改写**），唐 19 人无重复直铺。代价：bingbu 卡片 2 人微顺序变（于谦前置）。 |
 | **event 模型** | 混合式：**新增 `events: EventAtom[]`**（`id`+数字 `year`+`institutionIds[]`），`timelines` **原封不动**（叙事节拍留存）。 | 晋升跨切面大事件为一等原子，不破坏现有 timeline 渲染。 |
 | **deepRead 事实源** | L2 存在性**纯由「显式 MDX 模块 map」派生**（map 里有 ref 即有 L2）；JSON 契约**不存 `deepRead` 字段**。 | 复刻 P4「派生而非重复」教训，杜绝 JSON↔map 漂移（P4 收敛 id 三处一致性同理）。 |
 | **MDX 试点** | slice ⑤ 试点**内阁（institution L2）**；票拟批红等 concept L2 留 slice ⑦。 | 一次只打通一条 MDX 管线，机构深读最自然。 |
@@ -45,7 +45,7 @@ DynastyDataSchema = strictObject({
 }).superRefine(全原子引用完整性)              // ① 扩展
 ```
 
-- **FigureAtomSchema**（②）：既有 `id/name/title/period/evaluation/story/tags(min1)` + **`institutionIds: string[](min1)`** + `…DepthContract?`。
+- **FigureAtomSchema**（②）：既有 `id/name/title/period/evaluation/story/tags(min1)` + **`institutionIds: string[](min1)`**。（深度契约 optional 字段随 ④ 与 institution/relation 一并铺，连同契约类型定义；② 只做结构扁平，最小化形变面。）
 - **EventAtomSchema**（③）：`id/name(min1)/year:number().int()/summary/institutionIds(min1)/tags(min1)` + `…DepthContract?`。`year` 数字便排序（负=公元前）。
 - **ConceptAtomSchema**（⑦）：`id/name(min1)/summary/institutionIds(min1)` + `…DepthContract?`。
 - **Institution/Relation**（④）：追加全部 optional 契约字段，**老字段全留**（institution 复用既有 `summary`）。
@@ -138,7 +138,7 @@ MDX 内联链接由构建期 `scripts/check-mdx-links.ts` 扫描兜底（⑤/⑦
 | # | 目标 | 验证标准 | 触及文件 | 边界 |
 |---|---|---|---|---|
 | **①** | 救活校验 + 全原子注册表 + ExternalRef 强白名单 + AtomRef 链解析（schema 骨架，容忍空数组） | 反例测试全红→全绿；真实数据零改仍绿 | `platform/utils/validation.ts`、`tests/section-data.test.ts`（+反例） | 不改数据/UI；events/concepts 默认 `[]` |
-| **②** | figure 扁平升原子（多对多 `institutionIds`），`getFigures` 派生签名不变 | 反例（悬空 institutionId / 重复 figure id）拒；`FiguresTab` 零改、抽屉仍渲染 figure；build diff | `validation.ts`、`platform/types/*`、`dataHelpers.ts`、明唐 `figures.json`、tests | 形态从 Record→数组，**唯此一处数据形变** |
+| **②** | figure 扁平升原子（多对多 `institutionIds`）+ 合并 3 隐性重复人物，`getFigures` 派生签名不变 | 反例（悬空 institutionId / 重复 figure id）拒；`FiguresTab` 零改、抽屉仍渲染 figure；getFigures 全机构 old↔new 对比仅 3 合并处变、零内容损；build diff | `validation.ts`、`platform/types/*`、`dataHelpers.ts`、明唐 `figures.json`、tests | 形态从 Record→数组，**唯此一处数据形变**；仅结构（深度契约留 ④）|
 | **③** | event 一等原子（数字 year）+ helper + 种子事件；timelines 不动 | event 引用完整性反例拒；`getEventById/getEvents` 测试；build 两页齐全 | `validation.ts`、`types`、`dataHelpers.ts`、明唐 `events.json`(新)、tests | 最小可视即可，富展示随 ⑥ |
 | **④** | 统一深度契约 optional 字段进 institution/relation + 种子若干 | links/citations/furtherReading 反例拒；老 UI 零回归；build diff | `validation.ts`、`types`、明唐数据、tests | 全 optional，不收紧 |
 | **⑤** | L2 MDX 试点（内阁）+ 受控外链组件 + 显式 map + DeepReadOverlay（两层解耦） | **build + diff `out/`：cabinet.mdx chunk 落地、两页齐全、明零回归唐迥异**；map 覆盖断言；「深读 ↗」按钮仅 L2 原子显示 | `next.config.ts`、`mdx-components.tsx`(新)、`platform/content/deep-read-map.ts`(新)、`DeepReadOverlay`(新)、`DetailDrawer`、`SelectionContext`、`dynasties/ming/content/`、`package.json` | **头号风险切片**；受阻降级 eager；不加 webpack 配置 |

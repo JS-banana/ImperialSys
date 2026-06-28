@@ -130,7 +130,7 @@ describe('loadDynastyData 反例（坏数据被拒）', () => {
     detail: { functions: [], structure: '', internalOrgs: [] },
     position: { x: 0, y: 0 },
   };
-  const ok = { institutions: [validInstitution], relations: [], timelines: {}, figures: {} };
+  const ok = { institutions: [validInstitution], relations: [], timelines: {}, figures: [] };
 
   it('合法最小数据集通过', () => {
     expect(() => loadDynastyData(ok)).not.toThrow();
@@ -170,11 +170,12 @@ describe('loadDynastyData 反例（坏数据被拒）', () => {
     ).toThrow();
   });
 
-  it('拒绝孤儿 figure 键（指向不存在的机构）', () => {
+  it('拒绝 figure 悬空 institutionId（指向不存在的机构）', () => {
     const figure = {
       id: 'f1', name: '某人', title: '', period: '', evaluation: '', story: '', tags: ['x'],
+      institutionIds: ['ghost'],
     };
-    expect(() => loadDynastyData({ ...ok, figures: { ghost: [figure] } })).toThrow();
+    expect(() => loadDynastyData({ ...ok, figures: [figure] })).toThrow();
   });
 
   it('拒绝重复机构 id（uniqueness）', () => {
@@ -204,7 +205,7 @@ describe('全原子注册表（event/concept/外链/互链）反例', () => {
     detail: { functions: [], structure: '', internalOrgs: [] },
     position: { x: 0, y: 0 },
   };
-  const base = { institutions: [inst], relations: [], timelines: {}, figures: {} };
+  const base = { institutions: [inst], relations: [], timelines: {}, figures: [] };
   const validEvent = {
     id: 'e1',
     name: '土木堡之变',
@@ -289,5 +290,55 @@ describe('全原子注册表（event/concept/外链/互链）反例', () => {
         events: [{ ...validEvent, keyMoments: ['一', '二', '三', '四'] }],
       }),
     ).toThrow();
+  });
+});
+
+// ─── ② figure 扁平升原子（Record→数组 + 多对多 institutionIds）───
+
+describe('② figure 扁平升原子（多对多）', () => {
+  const ming = loadDynastyData(
+    {
+      institutions: mingInstitutions.institutions,
+      relations: mingRelations.relations,
+      timelines: mingTimelines.timelines,
+      figures: mingFigures.figures,
+    },
+    '明',
+  );
+  const helpers = createDataHelpers(ming);
+
+  it('getFigures 保持机构维度（内阁三人不变、签名不变）', () => {
+    expect(helpers.getFigures('cabinet').map((f) => f.id)).toEqual([
+      'zhang_juzheng',
+      'yang_shiqi',
+      'yan_song',
+    ]);
+  });
+
+  it('同一 figure 原子跨机构出现（王振 ∈ 司礼监 ∩ 东厂，同一 id）', () => {
+    expect(helpers.getFigures('silijian').map((f) => f.id)).toContain('wang_zhen');
+    expect(helpers.getFigures('dongchang').map((f) => f.id)).toContain('wang_zhen');
+  });
+
+  it('于谦合并：都察院与兵部共享同一原子（旧 yu_qian_bingbu 桩已并）', () => {
+    expect(helpers.getFigures('duchayuan').map((f) => f.id)).toContain('yu_qian');
+    expect(helpers.getFigures('bingbu').map((f) => f.id)).toContain('yu_qian');
+    // 旧的合成后缀 id 不再存在
+    expect(ming.figures.map((f) => f.id)).not.toContain('yu_qian_bingbu');
+  });
+
+  it('拒绝重复 figure id（扁平后全局唯一）', () => {
+    const f = {
+      id: 'f1', name: '某', title: '', period: '', evaluation: '', story: '', tags: ['x'],
+      institutionIds: ['a'],
+    };
+    const inst = {
+      id: 'a', name: '甲', shortName: '甲', category: 'central', level: 1, summary: '',
+      established: '1', detail: { functions: [], structure: '', internalOrgs: [] },
+      position: { x: 0, y: 0 },
+    };
+    expect(() =>
+      loadDynastyData({ institutions: [inst], relations: [], timelines: {}, figures: [f, { ...f, name: '乙' }] }),
+    ).toThrow(/重复|唯一/);
   });
 });
