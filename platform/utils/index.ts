@@ -1,5 +1,6 @@
 export { cn } from './cn';
 export { createDataHelpers, type DataSource, type DataHelpers } from './dataHelpers';
+export { loadDynastyData } from './loadDynastyData';
 export {
   InstitutionSchema,
   RelationSchema,

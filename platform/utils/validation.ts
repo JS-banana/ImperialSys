@@ -77,24 +77,6 @@ export const FigureSchema = z.strictObject({
   tags: z.array(z.string()).min(1),
 });
 
-// ─── Top-Level File Schemas ──────────────────────────────────────────
-
-const InstitutionsFileSchema = z.strictObject({
-  institutions: z.array(InstitutionSchema),
-});
-
-const RelationsFileSchema = z.strictObject({
-  relations: z.array(RelationSchema),
-});
-
-const TimelinesFileSchema = z.strictObject({
-  timelines: z.record(z.string(), z.array(TimelineEventSchema)),
-});
-
-const FiguresFileSchema = z.strictObject({
-  figures: z.record(z.string(), z.array(FigureSchema)),
-});
-
 // ─── Combined DynastyData with Cross-Reference Checks ────────────────
 
 export const DynastyDataSchema = z
