@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // 非应用源码：技能样例与文档，不纳入质量门
+    ".agents/**",
+    "docs/**",
   ]),
 ]);
 

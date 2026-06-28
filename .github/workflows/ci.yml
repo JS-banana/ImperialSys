@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+
+# 质量门（baseline 阶段）：error 拦、warning 放。相位 2 再收紧 --max-warnings。
+jobs:
+  quality-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # pnpm 版本取自 package.json 的 packageManager 字段
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Typecheck (tsc --noEmit)
+        run: pnpm typecheck
+
+      - name: Lint (eslint，error 拦、warning 放)
+        run: pnpm lint
+
+      - name: Test (vitest，明+唐 数据完整性 + Zod 反例)
+        run: pnpm test
+
+      - name: Build (next build，数据完整性硬门)
+        run: pnpm build

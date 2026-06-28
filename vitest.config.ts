@@ -8,6 +8,25 @@ export default defineConfig({
     },
   },
   test: {
-    environment: 'node',
+    // 双 project：逻辑/数据测试跑 node（快），组件/React 测试跑 jsdom（有 DOM）。
+    // extends: true 继承根级 resolve.alias，让 @/ 与 import type 都能解析。
+    projects: [
+      {
+        extends: true,
+        test: {
+          name: 'unit',
+          environment: 'node',
+          include: ['tests/**/*.test.ts'],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: 'dom',
+          environment: 'jsdom',
+          include: ['tests/**/*.test.tsx'],
+        },
+      },
+    ],
   },
 });
