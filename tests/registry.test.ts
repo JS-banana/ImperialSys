@@ -5,6 +5,7 @@ import {
   getDynastyManifest,
   getDynastyMetaList,
 } from '../platform/registry';
+import { DYNASTY_HEROES } from '../platform/dynasty-client-map';
 
 // 平台朝代注册表：聚合各朝 manifest（纯服务端数据）。
 // 新增朝代 = 写 manifest + 在 registry 加一行——这里钉住聚合/查询/契约。
@@ -50,5 +51,21 @@ describe('platform/registry 朝代注册表', () => {
     expect(data.institutions.length).toBeGreaterThan(0);
     expect(data.relations.length).toBeGreaterThan(0);
     expect(data.theme).toBeDefined();
+  });
+
+  // ─── id 三处一致性硬门（堵 P4 三处登记的静默漂移）──────────────────────
+  // 朝代 id 写在 registry 键 / manifest.meta.id / DYNASTY_HEROES 键三处，任一漂移都静默坏页
+  // （meta.id≠键 → 首页链接 404；hero 键漏 → 该朝静默丢 hero）。把隐式约束钉成构建期红灯。
+
+  it('每朝 registry 键 === 其 manifest.meta.id（id 单一事实源）', () => {
+    for (const [id, manifest] of Object.entries(DYNASTIES)) {
+      expect(manifest.meta.id).toBe(id);
+    }
+  });
+
+  it('DYNASTY_HEROES 覆盖每个已注册朝代 id（堵 hero 静默丢失）', () => {
+    for (const id of getDynastyIds()) {
+      expect(DYNASTY_HEROES[id]).toBeDefined();
+    }
   });
 });
