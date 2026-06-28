@@ -42,7 +42,20 @@
           { "name": "群辅", "desc": "其余内阁大学士，参与票拟等事务" }
         ]
       },
-      "position": { "x": 250, "y": 220 }
+      "position": { "x": 250, "y": 220 },
+      "institutionalRole": "替补废相后的相权真空，以「票拟」拟旨、与司礼监「批红」相互牵制，构成明代中枢决策的双轨。",
+      "keyMoments": [
+        "永乐设内阁为皇帝顾问，初无定制",
+        "三杨辅政确立票拟规范，内阁渐成中枢",
+        "张居正以首辅独揽朝纲，将阁权推至极致"
+      ],
+      "links": ["figure:zhang_juzheng", "figure:yang_shiqi"],
+      "citations": [
+        { "label": "《明史·职官志一》（内阁）", "url": "https://ctext.org/wiki.pl?if=gb&res=553624", "source": "ctext" }
+      ],
+      "furtherReading": [
+        { "label": "维基百科：内阁 (明朝)", "url": "https://zh.wikipedia.org/wiki/内阁_(明朝)", "source": "wikipedia" }
+      ]
     },
     {
       "id": "silijian",

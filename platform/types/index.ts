@@ -9,6 +9,8 @@ export type {
   EventAtom,
 } from './institution';
 
+export type { ExternalRef, DepthContract } from './atom';
+
 export type {
   RelationType,
   Relation,

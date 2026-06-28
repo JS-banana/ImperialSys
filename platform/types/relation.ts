@@ -1,3 +1,5 @@
+import type { DepthContract } from './atom';
+
 // 关系类型
 export type RelationType =
   | 'command'
@@ -7,7 +9,7 @@ export type RelationType =
   | 'direct';
 
 // 关系
-export interface Relation {
+export interface Relation extends DepthContract {
   id: string;
   source: string;
   target: string;

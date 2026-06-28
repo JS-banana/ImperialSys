@@ -10,75 +10,6 @@ export const RelationTypeSchema = z.enum(
   ['command', 'supervise', 'check', 'cooperate', 'direct']
 );
 
-// ─── Institution ─────────────────────────────────────────────────────
-
-export const FunctionItemSchema = z.strictObject({
-  icon: z.string(),
-  title: z.string(),
-  description: z.string(),
-});
-
-export const InternalOrgSchema = z.strictObject({
-  name: z.string(),
-  desc: z.string(),
-});
-
-export const InstitutionDetailSchema = z.strictObject({
-  functions: z.array(FunctionItemSchema),
-  structure: z.string(),
-  internalOrgs: z.array(InternalOrgSchema),
-});
-
-export const PositionSchema = z.strictObject({
-  x: z.number(),
-  y: z.number(),
-});
-
-export const InstitutionSchema = z.strictObject({
-  id: z.string().min(1),
-  name: z.string().min(1),
-  shortName: z.string(),
-  category: InstitutionCategorySchema,
-  level: z.number().int().min(1),
-  summary: z.string(),
-  established: z.string(),
-  detail: InstitutionDetailSchema,
-  position: PositionSchema,
-});
-
-// ─── Relation ────────────────────────────────────────────────────────
-
-export const RelationSchema = z.strictObject({
-  id: z.string().min(1),
-  source: z.string().min(1),
-  target: z.string().min(1),
-  type: RelationTypeSchema,
-  label: z.string(),
-  description: z.string(),
-});
-
-// ─── TimelineEvent ───────────────────────────────────────────────────
-
-export const TimelineEventSchema = z.strictObject({
-  year: z.string(),
-  event: z.string(),
-  description: z.string(),
-});
-
-// ─── Figure ──────────────────────────────────────────────────────────
-
-// figure：人物升一等原子（扁平数组 + institutionIds 多对多，取代旧 Record<instId, Figure[]>）。
-export const FigureSchema = z.strictObject({
-  id: z.string().min(1),
-  name: z.string(),
-  title: z.string(),
-  period: z.string(),
-  evaluation: z.string(),
-  story: z.string(),
-  tags: z.array(z.string()).min(1),
-  institutionIds: z.array(z.string().min(1)).min(1),
-});
-
 // ─── 外链 / 深度契约（ADR-0006）─────────────────────────────────────
 // ExternalRef：唯一站外出口。host 强白名单（与 source 一致）见 DynastyDataSchema.superRefine。
 export const ExternalRefSchema = z
@@ -114,7 +45,7 @@ export const ExternalRefSchema = z
     }
   });
 
-// 深度契约：全 optional（先 optional 后收紧）。可铺到任意原子。
+// 深度契约：全 optional（先 optional 后收紧）。可铺到任意原子（机构/关系/人物/事件/概念）。
 // links 互链站内原子（AtomRef "type:id"，注册表解析见 superRefine）；
 // citations/furtherReading 为站外史料/延伸阅读（克制靠后，ADR-0006）。
 const depthContractShape = {
@@ -124,6 +55,78 @@ const depthContractShape = {
   citations: z.array(ExternalRefSchema).optional(),
   furtherReading: z.array(ExternalRefSchema).optional(),
 };
+
+// ─── Institution ─────────────────────────────────────────────────────
+
+export const FunctionItemSchema = z.strictObject({
+  icon: z.string(),
+  title: z.string(),
+  description: z.string(),
+});
+
+export const InternalOrgSchema = z.strictObject({
+  name: z.string(),
+  desc: z.string(),
+});
+
+export const InstitutionDetailSchema = z.strictObject({
+  functions: z.array(FunctionItemSchema),
+  structure: z.string(),
+  internalOrgs: z.array(InternalOrgSchema),
+});
+
+export const PositionSchema = z.strictObject({
+  x: z.number(),
+  y: z.number(),
+});
+
+export const InstitutionSchema = z.strictObject({
+  id: z.string().min(1),
+  name: z.string().min(1),
+  shortName: z.string(),
+  category: InstitutionCategorySchema,
+  level: z.number().int().min(1),
+  summary: z.string(),
+  established: z.string(),
+  detail: InstitutionDetailSchema,
+  position: PositionSchema,
+  ...depthContractShape,
+});
+
+// ─── Relation ────────────────────────────────────────────────────────
+
+export const RelationSchema = z.strictObject({
+  id: z.string().min(1),
+  source: z.string().min(1),
+  target: z.string().min(1),
+  type: RelationTypeSchema,
+  label: z.string(),
+  description: z.string(),
+  ...depthContractShape,
+});
+
+// ─── TimelineEvent ───────────────────────────────────────────────────
+
+export const TimelineEventSchema = z.strictObject({
+  year: z.string(),
+  event: z.string(),
+  description: z.string(),
+});
+
+// ─── Figure ──────────────────────────────────────────────────────────
+
+// figure：人物升一等原子（扁平数组 + institutionIds 多对多，取代旧 Record<instId, Figure[]>）。
+export const FigureSchema = z.strictObject({
+  id: z.string().min(1),
+  name: z.string(),
+  title: z.string(),
+  period: z.string(),
+  evaluation: z.string(),
+  story: z.string(),
+  tags: z.array(z.string()).min(1),
+  institutionIds: z.array(z.string().min(1)).min(1),
+  ...depthContractShape,
+});
 
 // ─── 内容原子（event / concept，P5）──────────────────────────────────
 // event：跨切面大事件升一等原子（数字 year 便排序）；timelines 叙事节拍另存、不动。
@@ -291,6 +294,27 @@ export const DynastyDataSchema = z
     checkAtomRefs(data.figures, '人物', 'figures');
     checkAtomRefs(data.events, '事件', 'events');
     checkAtomRefs(data.concepts, '概念', 'concepts');
+
+    // 机构 / 关系的深度契约 links：仅校验互链命中注册表（id 唯一另有专查，无 institutionIds）
+    const checkLinks = (
+      atoms: ReadonlyArray<{ id: string; links?: string[] }>,
+      labelCn: string,
+      key: 'institutions' | 'relations',
+    ) => {
+      atoms.forEach((atom, index) => {
+        (atom.links ?? []).forEach((link, j) => {
+          if (!atomRefs.has(link)) {
+            ctx.addIssue({
+              code: 'custom',
+              message: `${labelCn} "${atom.id}" 的 link "${link}" 未命中任何原子（注册表无此 AtomRef）`,
+              path: [key, index, 'links', j],
+            });
+          }
+        });
+      });
+    };
+    checkLinks(data.institutions, '机构', 'institutions');
+    checkLinks(data.relations, '关系', 'relations');
   });
 
 // ─── Inferred Types ──────────────────────────────────────────────────

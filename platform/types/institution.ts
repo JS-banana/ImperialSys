@@ -1,3 +1,5 @@
+import type { DepthContract } from './atom';
+
 // 机构类别
 export type InstitutionCategory =
   | 'central'
@@ -27,7 +29,7 @@ export interface InstitutionDetail {
 }
 
 // 机构
-export interface Institution {
+export interface Institution extends DepthContract {
   id: string;
   name: string;
   shortName: string;
@@ -47,7 +49,7 @@ export interface TimelineEvent {
 }
 
 // 人物（一等原子：扁平数组 + institutionIds 多对多）
-export interface Figure {
+export interface Figure extends DepthContract {
   id: string;
   name: string;
   title: string;
@@ -59,7 +61,7 @@ export interface Figure {
 }
 
 // 事件（一等原子：跨切面大事件，数字 year 便排序；timelines 叙事节拍另存、不并入）
-export interface EventAtom {
+export interface EventAtom extends DepthContract {
   id: string;
   name: string;
   year: number;

@@ -115,6 +115,15 @@ describe('明 · 数据查询行为', () => {
       'r_cabinet_gongbu',
     ]);
   });
+
+  it('内阁深度契约可读（④ 种子：role / links / citations / furtherReading）', () => {
+    const cabinet = helpers.getInstitutionById('cabinet');
+    expect(cabinet?.institutionalRole).toContain('票拟');
+    expect(cabinet?.keyMoments?.length).toBeGreaterThan(0);
+    expect(cabinet?.links).toContain('figure:zhang_juzheng');
+    expect(cabinet?.citations?.[0]?.source).toBe('ctext');
+    expect(cabinet?.furtherReading?.[0]?.source).toBe('wikipedia');
+  });
 });
 
 // ─── 反例：坏数据必须被 loadDynastyData 拒绝（救活 Zod 死代码的核心断言）───
@@ -290,6 +299,42 @@ describe('全原子注册表（event/concept/外链/互链）反例', () => {
         ...base,
         events: [{ ...validEvent, keyMoments: ['一', '二', '三', '四'] }],
       }),
+    ).toThrow();
+  });
+
+  // ── ④ 深度契约铺到 institution / relation ──
+  const contract = {
+    institutionalRole: '中枢票拟',
+    keyMoments: ['三杨辅政确立票拟'],
+    links: ['institution:a'],
+    citations: [{ label: '明史', url: 'https://ctext.org/wiki.pl?if=gb&res=1', source: 'ctext' }],
+    furtherReading: [{ label: '维基', url: 'https://zh.wikipedia.org/wiki/内阁', source: 'wikipedia' }],
+  };
+
+  it('接受带深度契约的 institution（契约字段已接入）', () => {
+    expect(() => loadDynastyData({ ...base, institutions: [{ ...inst, ...contract }] })).not.toThrow();
+  });
+
+  it('拒绝 institution 悬空 link', () => {
+    expect(() =>
+      loadDynastyData({ ...base, institutions: [{ ...inst, links: ['institution:ghost'] }] }),
+    ).toThrow();
+  });
+
+  it('拒绝 institution 外链 host 与 source 不符', () => {
+    expect(() =>
+      loadDynastyData({
+        ...base,
+        institutions: [{ ...inst, citations: [{ label: '伪', url: 'https://evil.com', source: 'ctext' }] }],
+      }),
+    ).toThrow();
+  });
+
+  it('接受带深度契约的 relation + 拒绝其悬空 link', () => {
+    const rel = { id: 'r1', source: 'a', target: 'a', type: 'check', label: '', description: '' };
+    expect(() => loadDynastyData({ ...base, relations: [{ ...rel, links: ['institution:a'] }] })).not.toThrow();
+    expect(() =>
+      loadDynastyData({ ...base, relations: [{ ...rel, links: ['concept:ghost'] }] }),
     ).toThrow();
   });
 });
