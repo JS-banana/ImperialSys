@@ -43,20 +43,13 @@ data/               — dynasty-registry（朝代目录，首页用）
 ## 当前状态（2026-06-28）
 
 - **多朝代架构已真实跑通**：明、唐两朝均完整、可静态构建；`lib/` 桥接层已删除（迁入 platform）。
-- **正处于「完美体验标准已定 → 架构重构」阶段**，标准是新的单一事实源。
+- **进度**：完美体验标准 ✅（ADR 0001-0006）；地基重构方案 ✅（`docs/specs/2026-06-28-architecture-refactor-plan.md`，8 阶段，**尚未实现**）；**下一步 = 界面/视觉详细设计**（在架构实现之前——架构 P2 主题管线需要界面设计产出的 design token；见 `docs/specs/2026-06-28-interface-design-brief.md`），之后再执行架构。标准是新的单一事实源。
 
 > ⚠️ **旧的 `docs/handoff-*`、`docs/architecture`、`docs/analysis`、`docs/research`、`docs/plans`、`conductor/` 及更早的记忆均已过时，不可作为依据——信代码、信 ADR。** 典型陷阱（实际现状）：Zod 校验是**死代码**（零调用，待救活）；GSAP `platform/animation/scroll.ts` 是**死代码**（零引用，待接入）；每朝代主题色管线**断线**（`--dynasty-*` 写了无人读，唐渲染成明）；分区内容**不进 SSR**；`tsc`/`eslint` 坏且被掩盖、无 CI。
 
-### 架构重构 backlog（由标准 commissions，详见 spec）
+### 重构方案
 
-1. 接通主题管线（朝代主题真正驱动 UI）
-2. 平台能力：穿越转场系统
-3. 平台能力：关系图谱原语（策展式，绝不裸力导向）
-4. 内容原子数据模型 + 救活 Zod 引用完整性 + L2 MDX + 延伸阅读外链字段
-5. 渲染/SSR 模型 + Server/Client 边界（修 section-registry+effect、`DynastyShell.tsx:47`）
-6. 接入 GSAP；动画 token 体系；reduced-motion 平台级 + 设备三态（桌面完整/移动可读/降级）
-7. 平台「去明朝化」（footer / CATEGORY_LABELS / RELATION_LEGEND 下放或泛化）
-8. 质量门 / CI（修绿 tsc / eslint、补 typecheck 脚本）
+8 阶段小步路线图见 `docs/specs/2026-06-28-architecture-refactor-plan.md`：P1 质量门 → P2 主题管线 → P3 渲染 SSR → P4 路由/manifest → P5 内容原子系统 → P6 动画基建 → P7 关系图谱 → P8 穿越转场。**当前未实现**；按计划执行前先完成界面/视觉设计。
 
 ## 开发规范
 
@@ -70,7 +63,9 @@ data/               — dynasty-registry（朝代目录，首页用）
 
 | 文档 | 内容 |
 |------|------|
-| `docs/specs/2026-06-28-experience-standard.md` | **完美体验标准**（北极星：6 维度 + 验收 + 架构 backlog）|
+| `docs/specs/2026-06-28-experience-standard.md` | **完美体验标准**（北极星：6 维度 + 验收）|
+| `docs/specs/2026-06-28-architecture-refactor-plan.md` | **地基重构方案**（8 阶段路线图 + 锁定决策，未实现）|
+| `docs/specs/2026-06-28-interface-design-brief.md` | **界面设计启动简报**（下一个 focus 的起点）|
 | `docs/adr/0001–0006` | 关键设计决策（温度 / 内容深度 / 朝代差异+穿越 / 关系可视化 / 设备底线 / 内容边界）|
 | `CONTEXT.md` | 领域语言词表 |
 
