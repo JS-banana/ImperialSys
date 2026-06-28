@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { X } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -8,19 +8,30 @@ import FunctionTab from './FunctionTab';
 import TimelineTab from './TimelineTab';
 import FiguresTab from './FiguresTab';
 import RelationsTab from './RelationsTab';
-import type { Institution } from '@/platform/types';
 import { CATEGORY_COLORS, CATEGORY_LABELS } from '@/platform/constants';
+import { useSelection } from '@/platform/context/SelectionContext';
+import { parseAtomRef } from '@/platform/context/selection';
+import { useDataHelpers } from '@/platform/context/DataHelpersContext';
 
-interface DetailDrawerProps {
-  institution: Institution | null;
-  open: boolean;
-  onClose: () => void;
-}
-
-export default function DetailDrawer({ institution, open, onClose }: DetailDrawerProps) {
+/**
+ * 详情抽屉：从通用 SelectionContext 读选中态、从 DataHelpers 解析机构。
+ * P3 仅消费 institution 原子；其余原子类型（event/figure/concept）由 P5 内容原子系统接管。
+ */
+export default function DetailDrawer() {
   const previousFocusRef = useRef<HTMLElement | null>(null);
   const drawerRef = useRef<HTMLDivElement | null>(null);
   const reduceMotion = useReducedMotion();
+  const { selectedRef, clear } = useSelection();
+  const helpers = useDataHelpers();
+
+  const institution = useMemo(() => {
+    if (!selectedRef) return null;
+    const { type, id } = parseAtomRef(selectedRef);
+    return type === 'institution' ? helpers.getInstitutionById(id) ?? null : null;
+  }, [selectedRef, helpers]);
+
+  const open = institution !== null;
+  const onClose = clear;
 
   useEffect(() => {
     if (!open || !institution) {

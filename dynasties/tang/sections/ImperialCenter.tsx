@@ -5,7 +5,7 @@ import { InstitutionCard } from '@/platform/components/cards';
 import { RelationBand } from '@/platform/components/shell';
 import ThreeDepartmentsDiagram from '../components/ThreeDepartmentsDiagram';
 
-export default function ImperialCenter({ institutions, relations, onSelectInstitution }: SectionProps) {
+export default function ImperialCenter({ institutions, relations }: SectionProps) {
   return (
     <>
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -14,7 +14,6 @@ export default function ImperialCenter({ institutions, relations, onSelectInstit
             key={inst.id}
             institution={inst}
             featured={inst.id === 'emperor'}
-            onSelect={onSelectInstitution}
           />
         ))}
       </div>

@@ -5,7 +5,7 @@ import { InstitutionCard } from '@/platform/components/cards';
 import { RelationBand } from '@/platform/components/shell';
 import RelationDiagram from '@/dynasties/ming/components/RelationDiagram';
 
-export default function CentralBalance({ institutions, relations, onSelectInstitution }: SectionProps) {
+export default function CentralBalance({ institutions, relations }: SectionProps) {
   return (
     <>
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -13,7 +13,6 @@ export default function CentralBalance({ institutions, relations, onSelectInstit
           <InstitutionCard
             key={inst.id}
             institution={inst}
-            onSelect={onSelectInstitution}
           />
         ))}
       </div>

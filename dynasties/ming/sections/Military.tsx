@@ -4,7 +4,7 @@ import type { SectionProps } from '@/platform/types';
 import { InstitutionCard } from '@/platform/components/cards';
 import RelationDiagram from '@/dynasties/ming/components/RelationDiagram';
 
-export default function Military({ institutions, onSelectInstitution }: SectionProps) {
+export default function Military({ institutions }: SectionProps) {
   return (
     <>
       <div className="grid grid-cols-1 gap-6">
@@ -12,7 +12,6 @@ export default function Military({ institutions, onSelectInstitution }: SectionP
           <InstitutionCard
             key={inst.id}
             institution={inst}
-            onSelect={onSelectInstitution}
           />
         ))}
       </div>

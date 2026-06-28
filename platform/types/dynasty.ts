@@ -18,12 +18,13 @@ export interface SectionConfig {
   relationIds?: string[];
 }
 
-// ─── 分区组件 Props ─────────────────────────────────────────────────
+// ─── 分区组件 Props（纯可序列化数据；选中态由 SelectionContext 承接）──
+// 不含回调：分区在 Server 端组合，函数 prop 无法跨 Server→Client 边界传递。
+// 卡片/抽屉通过 useSelection 读写选中态。
 
 export interface SectionProps {
   institutions: Institution[];
   relations: Relation[];
-  onSelectInstitution: (inst: Institution) => void;
 }
 
 // ─── 分区定义（含组件引用，仅 Client 端使用）─────────────────────

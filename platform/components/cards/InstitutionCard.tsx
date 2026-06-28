@@ -5,15 +5,17 @@ import { motion } from 'framer-motion';
 import type { Institution } from '@/platform/types';
 import { cn } from '@/platform/utils';
 import { CATEGORY_COLORS, CATEGORY_LABELS } from '@/platform/constants';
+import { useSelection } from '@/platform/context/SelectionContext';
+import { makeAtomRef } from '@/platform/context/selection';
 
 interface InstitutionCardProps {
   institution: Institution;
   featured?: boolean;
-  onSelect: (institution: Institution) => void;
 }
 
-export default function InstitutionCard({ institution, featured = false, onSelect }: InstitutionCardProps) {
+export default function InstitutionCard({ institution, featured = false }: InstitutionCardProps) {
   const palette = CATEGORY_COLORS[institution.category];
+  const { select } = useSelection();
 
   return (
     <motion.article
@@ -113,7 +115,7 @@ export default function InstitutionCard({ institution, featured = false, onSelec
 
           <button
             type="button"
-            onClick={() => onSelect(institution)}
+            onClick={() => select(makeAtomRef('institution', institution.id))}
             className="inline-flex shrink-0 items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-colors hover:bg-[var(--vermillion-wash)]"
             style={{ borderColor: palette.border, color: palette.text }}
           >
