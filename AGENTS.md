@@ -43,13 +43,13 @@ data/               — dynasty-registry（朝代目录，首页用）
 ## 当前状态（2026-06-28）
 
 - **多朝代架构已真实跑通**：明、唐两朝均完整、可静态构建；`lib/` 桥接层已删除（迁入 platform）。
-- **进度**：完美体验标准 ✅（ADR 0001-0006）；地基重构方案 ✅（`docs/specs/2026-06-28-architecture-refactor-plan.md`，8 阶段）；**界面/视觉/交互设计 ✅**（`docs/specs/2026-06-28-interface-design-system.md`，A–E 全敲定 + 明/唐 token 真值定稿 + 招牌场景/穿越门户编排，ADR-0007）；**架构实现：P1 质量门 ✅**（commit `4c663a6`→`f3115de`）；**下一步 = P2 主题管线**（接入设计系统 §6 的 token 真值；注意与 `meta.ts`/`page.tsx` 的串行约束）。标准 + 设计系统是单一事实源。
+- **进度**：完美体验标准 ✅（ADR 0001-0006）；地基重构方案 ✅（`docs/specs/2026-06-28-architecture-refactor-plan.md`，8 阶段）；**界面/视觉/交互设计 ✅**（`docs/specs/2026-06-28-interface-design-system.md`，A–E 全敲定 + 明/唐 token 真值定稿 + 招牌场景/穿越门户编排，ADR-0007）；**架构实现：P1 质量门 ✅**（`4c663a6`→`f3115de`）、**P2 主题管线 ✅**（`374517c`→`b75202d`；`DynastyTheme` 语义令牌化 + Zod 必填硬门 + `themeToCssVars` + `DynastyThemeStyle` SSR 作用域 `<style>`，唐与明迥异、Ming 零回归、零全局泄漏，5 路对抗复核通过）；**下一步 = P3 渲染模型 SSR**（最高风险结构地基；注意 `page.tsx` 串行约束）。标准 + 设计系统是单一事实源。
 
-> ⚠️ **旧的 `docs/handoff-*`、`docs/architecture`、`docs/analysis`、`docs/research`、`docs/plans`、`conductor/` 及更早的记忆均已过时，不可作为依据——信代码、信 ADR。** 典型陷阱：**P1 已修**——Zod 校验救活（`platform/utils/loadDynastyData.ts` 构建期硬门，meta 走 loader）、`tsc`/`eslint`/CI 立起（`typecheck`+`ci` 脚本 + `.github/workflows/ci.yml`，baseline 门 error 拦/warning 放）、深链接 set-state-in-effect 改 `useSyncExternalStore`；**仍待**——GSAP `platform/animation/scroll.ts` **死代码**（P6 接入）、每朝代主题色管线**断线**（`--dynasty-*` 写了无人读、唐渲染成明，P2 修）、分区内容**不进 SSR**（P3 修）。
+> ⚠️ **旧的 `docs/handoff-*`、`docs/architecture`、`docs/analysis`、`docs/research`、`docs/plans`、`conductor/` 及更早的记忆均已过时，不可作为依据——信代码、信 ADR。** 典型陷阱：**P1/P2 已修**——P1：Zod 救活（`platform/utils/loadDynastyData.ts` 构建期硬门，meta 走 loader）、`tsc`/`eslint`/CI 立起、深链接改 `useSyncExternalStore`；P2：主题管线接通（`theme.ts` 语义令牌化 + `themeToCssVars` + `DynastyThemeStyle` 渲染 `[data-dynasty]{…}` SSR 作用域 `<style>`，**删 `--dynasty-*` 全局注入**、唐迥异、`--ring`/`::selection` 改 `color-mix(var(--vermillion))` 跟色）；**仍待**——GSAP `platform/animation/scroll.ts` **死代码**（P6 接入）、分区内容**不进 SSR**（P3 修）；**P2 遗留 low（已知、延后）**——`data-dynasty` 仅在 shell 包裹层 → `html`/`body`/scrollbar 及未消费的 shadcn `--card/--popover/--secondary/--accent` 仍 `:root` 平台默认（明味、当前不渲染或仅过卷可见），随 P4 把 `data-dynasty` 上提 `html`/`body` 一并跟色；唐 Hero 亮金 `#E3C36B` 待招牌阶段；`decorative`/`density` 已存数据待 P6 消费；去明文案的 `CATEGORY_LABELS/RELATION_LEGEND` per-dynasty 覆盖机制**有意未做**（现标签明唐通用、图例零消费者；待真有朝代需异标签时按 ADR-0007 进 `meta` 不进 `theme`）。
 
 ### 重构方案
 
-8 阶段小步路线图见 `docs/specs/2026-06-28-architecture-refactor-plan.md`：**P1 质量门 ✅** → P2 主题管线 → P3 渲染 SSR → P4 路由/manifest → P5 内容原子系统 → P6 动画基建 → P7 关系图谱 → P8 穿越转场。**P2+ 未实现**；界面/视觉设计已完成，实做时 P2/P6/P7/P8 接入 `docs/specs/2026-06-28-interface-design-system.md`（§10 列出研究增补 delta）。
+8 阶段小步路线图见 `docs/specs/2026-06-28-architecture-refactor-plan.md`：**P1 质量门 ✅** → **P2 主题管线 ✅** → P3 渲染 SSR → P4 路由/manifest → P5 内容原子系统 → P6 动画基建 → P7 关系图谱 → P8 穿越转场。**P3+ 未实现**；界面/视觉设计已完成，实做时 P6/P7/P8 接入 `docs/specs/2026-06-28-interface-design-system.md`（§10 列出研究增补 delta）。
 
 ## 开发规范
 
@@ -64,7 +64,7 @@ data/               — dynasty-registry（朝代目录，首页用）
 | 文档 | 内容 |
 |------|------|
 | `docs/specs/2026-06-28-experience-standard.md` | **完美体验标准**（北极星：6 维度 + 验收）|
-| `docs/specs/2026-06-28-architecture-refactor-plan.md` | **地基重构方案**（8 阶段路线图 + 锁定决策；P1 ✅，P2+ 未实现）|
+| `docs/specs/2026-06-28-architecture-refactor-plan.md` | **地基重构方案**（8 阶段路线图 + 锁定决策；P1/P2 ✅，P3+ 未实现）|
 | `docs/specs/2026-06-28-interface-design-system.md` | **界面设计系统**（A 基底 / B 朝代 token 真值 / C 招牌场景 / D 关键界面 / E 微交互；喂架构 P2/P6/P7/P8）|
 | `docs/specs/2026-06-28-interface-design-brief.md` | 界面设计启动简报（已完成，历史起点）|
 | `docs/adr/0001–0007` | 关键设计决策（温度 / 内容深度 / 朝代差异+穿越 / 关系可视化 / 设备底线 / 内容边界 / **设计令牌分层**）|
