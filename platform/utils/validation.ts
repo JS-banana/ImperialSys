@@ -87,6 +87,20 @@ export const DynastyDataSchema = z
     figures: z.record(z.string(), z.array(FigureSchema)),
   })
   .superRefine((data, ctx) => {
+    // 机构 id 唯一性：下方引用校验用 Set(ids) 当真值源，重复 id 会被静默去重、
+    // 令 relation/timeline/figure 的引用校验失真，故先在此拒绝重复
+    const seenInstitutionIds = new Set<string>();
+    data.institutions.forEach((inst, index) => {
+      if (seenInstitutionIds.has(inst.id)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `机构 id "${inst.id}" 重复（机构 id 必须唯一）`,
+          path: ['institutions', index, 'id'],
+        });
+      }
+      seenInstitutionIds.add(inst.id);
+    });
+
     const institutionIds = new Set(data.institutions.map((i) => i.id));
 
     // 检查 relation 的 source/target 是否指向有效机构

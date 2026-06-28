@@ -142,7 +142,7 @@ describe('loadDynastyData 反例（坏数据被拒）', () => {
     ).toThrow();
   });
 
-  it('拒绝悬空 relation 端点（superRefine 引用完整性）', () => {
+  it('拒绝悬空 relation target（superRefine 引用完整性）', () => {
     expect(() =>
       loadDynastyData({
         ...ok,
@@ -153,10 +153,34 @@ describe('loadDynastyData 反例（坏数据被拒）', () => {
     ).toThrow();
   });
 
+  it('拒绝悬空 relation source（superRefine 引用完整性）', () => {
+    expect(() =>
+      loadDynastyData({
+        ...ok,
+        relations: [
+          { id: 'r1', source: 'ghost', target: 'a', type: 'command', label: '', description: '' },
+        ],
+      }),
+    ).toThrow();
+  });
+
   it('拒绝孤儿 timeline 键（指向不存在的机构）', () => {
     expect(() =>
       loadDynastyData({ ...ok, timelines: { ghost: [{ year: '1368', event: '', description: '' }] } }),
     ).toThrow();
+  });
+
+  it('拒绝孤儿 figure 键（指向不存在的机构）', () => {
+    const figure = {
+      id: 'f1', name: '某人', title: '', period: '', evaluation: '', story: '', tags: ['x'],
+    };
+    expect(() => loadDynastyData({ ...ok, figures: { ghost: [figure] } })).toThrow();
+  });
+
+  it('拒绝重复机构 id（uniqueness）', () => {
+    expect(() =>
+      loadDynastyData({ ...ok, institutions: [validInstitution, { ...validInstitution }] }),
+    ).toThrow(/重复/);
   });
 
   it('拒绝多余字段（strictObject）', () => {
