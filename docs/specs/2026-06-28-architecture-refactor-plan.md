@@ -119,8 +119,10 @@
 
 - **代码规范（P1）**：除修绿 tsc/eslint + `typecheck`/`ci` 脚本 + CI 外，补 prettier + import 顺序；新增《代码规范》文档（命名 / 目录约定 / Server-Client 边界 / 测试位置）并由 lint+CI 强制。
 - **目标目录树（P3/P4）**：P3 渲染模型 + P4 manifest/路由落定后，产出一张「目标目录树」总图作单一参照；**收口根 `components/`（shadcn）与 `platform/components/` 的双份组件家**（明确 shadcn ui 归处 vs 平台组件归处）。
+  - **❓`src/` 目录待决（开发阶段知悉）**：当前无 `src/`，源码（app/platform/dynasties/data/components）全在根，`tsconfig` `@/*` → `./*`。是否迁入 `src/`（Next 官方支持，配置/源码分离更整洁）属机械但全量改动（动 paths + 搬全部源码目录）。**不在设计阶段定，P3/P4 产出目标目录树时一并决策**——用户 2026-06-28 已点出此问题存在。
 - **依赖现代化（P6 等）**：`framer-motion` → 官方新包 `motion`（`import "motion/react"`）；按需新增 `@gsap/react`(P6)、`@next/mdx`+`velite`(P5)、`d3-shape`+`elkjs` 离线(P7)。栈主体（Next16 / React19 / Tailwind4 / Zod4 / Base UI / GSAP）已最新，无需大改。
 - **工程卫生**：清 `conductor/` 残留；`scratchpad/` 已 gitignore；产物（`*.tsbuildinfo` 等）确认忽略。
+- **项目 skills 利用**（`.agents/skills/`）：实做套用 `vercel-react-best-practices`（React/Next 性能）+ `make-interfaces-feel-better`（手感）；视觉用 `frontend-design`；`remotion-best-practices` **不适用**（ADR-0001 已弃 remotion，建议清理该 skill）。
 
 ## 下一步
 
