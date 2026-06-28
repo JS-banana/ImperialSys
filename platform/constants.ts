@@ -132,13 +132,3 @@ export const CATEGORY_LABELS: Record<InstitutionCategory, string> = {
   military: '军事',
   secret: '特务',
 };
-
-// ─── 全局色彩常量 ──────────────────────────────────────────────────
-export const SITE_CHROME = {
-  paper: '#F5F0E8',
-  paperDark: '#EDE5D8',
-  ink: '#2C2C2C',
-  inkLight: '#5C5C5C',
-  vermilion: '#C0392B',
-  gold: '#B8860B',
-} as const;

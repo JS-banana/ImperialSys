@@ -30,6 +30,8 @@ interface DynastyShellProps {
   data: DynastyData;
   sectionConfigs: SectionConfig[];
   registerSections: () => void;
+  /** 朝代页脚结语（去明朝化：平台不再硬写「以明朝为起点…」，由各朝代提供）*/
+  footerNote: string;
   /** 朝代自定义 Hero 组件（可选），渲染在分区之前。接收 data 作为 props */
   hero?: React.ComponentType<{ data: DynastyData }>;
 }
@@ -39,6 +41,7 @@ export function DynastyShell({
   data,
   sectionConfigs,
   registerSections,
+  footerNote,
   hero,
 }: DynastyShellProps) {
   // 创建朝代数据查询工具（从 props 数据实例化，不依赖全局状态）
@@ -130,7 +133,7 @@ export function DynastyShell({
         </main>
 
         <footer className="mx-auto mt-8 max-w-6xl px-8 text-center text-sm leading-7 text-[var(--ink-subtle)]">
-          以明朝为起点，先把制度骨架讲清楚，再逐步扩展到其他朝代。
+          {footerNote}
         </footer>
 
         <DetailDrawer

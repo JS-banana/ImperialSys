@@ -19,3 +19,7 @@ export function getTangDynastyData(): DynastyData {
   );
   return { ...data, theme: loadDynastyTheme(TANG_THEME, '唐') };
 }
+
+// 页脚结语（唐）。去明朝化：不再硬写「以明朝为起点…」。
+export const TANG_FOOTER_NOTE =
+  '三省分权、政事堂议政，盛唐以开阔而精密的制度，托起一个世界性帝国的运转。';

@@ -19,3 +19,7 @@ export function getMingDynastyData(): DynastyData {
   );
   return { ...data, theme: loadDynastyTheme(MING_THEME, '明') };
 }
+
+// 页脚结语（明）。沿用重构前文案，视觉零回归。
+export const MING_FOOTER_NOTE =
+  '以明朝为起点，先把制度骨架讲清楚，再逐步扩展到其他朝代。';
