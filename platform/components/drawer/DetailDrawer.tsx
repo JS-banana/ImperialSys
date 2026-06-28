@@ -12,17 +12,24 @@ import { CATEGORY_COLORS, CATEGORY_LABELS } from '@/platform/constants';
 import { useSelection } from '@/platform/context/SelectionContext';
 import { parseAtomRef } from '@/platform/context/selection';
 import { useDataHelpers } from '@/platform/context/DataHelpersContext';
+import { hasDeepRead } from '@/platform/content/deep-read-map';
 
 /**
  * 详情抽屉：从通用 SelectionContext 读选中态、从 DataHelpers 解析机构。
  * P3 仅消费 institution 原子；其余原子类型（event/figure/concept）由 P5 内容原子系统接管。
  */
-export default function DetailDrawer() {
+export default function DetailDrawer({ dynastyId }: { dynastyId: string }) {
   const previousFocusRef = useRef<HTMLElement | null>(null);
   const drawerRef = useRef<HTMLDivElement | null>(null);
   const reduceMotion = useReducedMotion();
-  const { selectedRef, clear } = useSelection();
+  const { selectedRef, clear, deepReadRef, openDeepRead } = useSelection();
   const helpers = useDataHelpers();
+
+  // L2 遮罩开着时，Esc 归 L2（见 DeepReadOverlay），抽屉不连带关闭——用 ref 读最新值免 effect 重挂。
+  const deepReadOpenRef = useRef(false);
+  useEffect(() => {
+    deepReadOpenRef.current = deepReadRef !== null;
+  }, [deepReadRef]);
 
   const institution = useMemo(() => {
     if (!selectedRef) return null;
@@ -46,6 +53,7 @@ export default function DetailDrawer() {
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
+        if (deepReadOpenRef.current) return; // L2 遮罩开着 → Esc 归 L2，不关抽屉
         onClose();
       }
     };
@@ -65,6 +73,7 @@ export default function DetailDrawer() {
   }
 
   const palette = CATEGORY_COLORS[institution.category];
+  const canDeepRead = selectedRef ? hasDeepRead(dynastyId, selectedRef) : false;
 
   return (
     <AnimatePresence>
@@ -115,6 +124,16 @@ export default function DetailDrawer() {
                       {institution.name}
                     </h2>
                     <p className="mt-2 text-sm leading-7 text-[var(--ink-muted)]">{institution.summary}</p>
+                    {canDeepRead && selectedRef ? (
+                      <button
+                        type="button"
+                        onClick={() => openDeepRead(selectedRef)}
+                        className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-black/10 px-3.5 py-1.5 text-xs font-medium transition-colors hover:bg-black/[0.03]"
+                        style={{ color: 'var(--accent)' }}
+                      >
+                        深读 L2 ↗
+                      </button>
+                    ) : null}
                   </div>
                 </div>
 

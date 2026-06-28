@@ -26,6 +26,12 @@ interface SelectionContextValue {
   select: (ref: AtomRef) => void;
   /** 清空选中（删除 URL 深链接）*/
   clear: () => void;
+  /** 当前打开 L2 深读的原子（null = 未打开）。瞬时态，不进 URL——两层解耦 */
+  deepReadRef: AtomRef | null;
+  /** 打开某原子的 L2 全屏深读 */
+  openDeepRead: (ref: AtomRef) => void;
+  /** 关闭 L2 深读（L1 选中态保留）*/
+  closeDeepRead: () => void;
 }
 
 const SelectionContext = createContext<SelectionContextValue | null>(null);
@@ -45,6 +51,9 @@ export function SelectionProvider({ children }: { children: ReactNode }) {
   const [userSelection, setUserSelection] = useState<AtomRef | null | undefined>(undefined);
   const selectedRef = resolveSelectedRef(userSelection, deepLinkRef);
 
+  // L2 深读瞬时态：不进 URL（两层解耦），故与深链接派生的 selectedRef 分开管理。
+  const [deepReadRef, setDeepReadRef] = useState<AtomRef | null>(null);
+
   const syncUrl = useCallback((ref: AtomRef | null) => {
     const url = new URL(window.location.href);
     url.search = applySelectionToSearch(url.search, ref);
@@ -61,12 +70,16 @@ export function SelectionProvider({ children }: { children: ReactNode }) {
 
   const clear = useCallback(() => {
     setUserSelection(null);
+    setDeepReadRef(null); // 关 L1 顺带关其上的 L2
     syncUrl(null);
   }, [syncUrl]);
 
+  const openDeepRead = useCallback((ref: AtomRef) => setDeepReadRef(ref), []);
+  const closeDeepRead = useCallback(() => setDeepReadRef(null), []);
+
   const value = useMemo<SelectionContextValue>(
-    () => ({ selectedRef, select, clear }),
-    [selectedRef, select, clear],
+    () => ({ selectedRef, select, clear, deepReadRef, openDeepRead, closeDeepRead }),
+    [selectedRef, select, clear, deepReadRef, openDeepRead, closeDeepRead],
   );
 
   return <SelectionContext.Provider value={value}>{children}</SelectionContext.Provider>;

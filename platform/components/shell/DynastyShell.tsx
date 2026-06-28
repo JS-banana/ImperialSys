@@ -8,7 +8,7 @@ import { SelectionProvider } from '@/platform/context/SelectionContext';
 import StickyNav from './StickyNav';
 import ScrollProgress from './ScrollProgress';
 import DynastyThemeStyle from './DynastyThemeStyle';
-import { DetailDrawer } from '@/platform/components/drawer';
+import { DetailDrawer, DeepReadOverlay } from '@/platform/components/drawer';
 
 interface DynastyShellProps {
   dynastyId: string;
@@ -71,7 +71,8 @@ export function DynastyShell({
             {footerNote}
           </footer>
 
-          <DetailDrawer />
+          <DetailDrawer dynastyId={dynastyId} />
+          <DeepReadOverlay dynastyId={dynastyId} />
         </div>
       </SelectionProvider>
     </DataHelpersProvider>
