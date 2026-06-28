@@ -189,3 +189,105 @@ describe('loadDynastyData 反例（坏数据被拒）', () => {
     ).toThrow();
   });
 });
+
+// ─── 全原子注册表：事件/概念原子 + 外链强白名单 + 互链 AtomRef 解析（P5 ①）───
+
+describe('全原子注册表（event/concept/外链/互链）反例', () => {
+  const inst = {
+    id: 'a',
+    name: '甲',
+    shortName: '甲',
+    category: 'central',
+    level: 1,
+    summary: '',
+    established: '1368',
+    detail: { functions: [], structure: '', internalOrgs: [] },
+    position: { x: 0, y: 0 },
+  };
+  const base = { institutions: [inst], relations: [], timelines: {}, figures: {} };
+  const validEvent = {
+    id: 'e1',
+    name: '土木堡之变',
+    year: 1449,
+    summary: '英宗北征大败被俘',
+    institutionIds: ['a'],
+    tags: ['军事'],
+  };
+
+  it('接受带 event 原子的数据集（events 数组已接入 schema）', () => {
+    expect(() => loadDynastyData({ ...base, events: [validEvent] })).not.toThrow();
+  });
+
+  it('拒绝 event 悬空 institutionId（不指向存在机构）', () => {
+    expect(() =>
+      loadDynastyData({ ...base, events: [{ ...validEvent, institutionIds: ['ghost'] }] }),
+    ).toThrow();
+  });
+
+  it('拒绝重复 event id（per-type 全局唯一）', () => {
+    expect(() =>
+      loadDynastyData({ ...base, events: [validEvent, { ...validEvent, name: '夺门之变' }] }),
+    ).toThrow(/重复|唯一/);
+  });
+
+  it('接受带深度契约字段（institutionalRole/keyMoments/links/citations/furtherReading）的 event', () => {
+    const enriched = {
+      ...validEvent,
+      institutionalRole: '体现皇权与文官的张力',
+      keyMoments: ['也先兵临北京', '于谦主战'],
+      links: ['institution:a'],
+      citations: [{ label: '明实录', url: 'https://ctext.org/wiki.pl?if=gb&res=123', source: 'ctext' }],
+      furtherReading: [{ label: '维基：土木堡之变', url: 'https://zh.wikipedia.org/wiki/土木之变', source: 'wikipedia' }],
+    };
+    expect(() => loadDynastyData({ ...base, events: [enriched] })).not.toThrow();
+  });
+
+  it('拒绝悬空 link AtomRef（互链指向不存在的原子）', () => {
+    expect(() =>
+      loadDynastyData({ ...base, events: [{ ...validEvent, links: ['institution:ghost'] }] }),
+    ).toThrow();
+  });
+
+  it('拒绝外链 host 与 source 不符（强白名单：source=ctext 但 host=evil）', () => {
+    expect(() =>
+      loadDynastyData({
+        ...base,
+        events: [
+          { ...validEvent, citations: [{ label: '伪源', url: 'https://evil.com/x', source: 'ctext' }] },
+        ],
+      }),
+    ).toThrow();
+  });
+
+  it('接受 other 源的 https 外链（白名单不过度拒绝）', () => {
+    expect(() =>
+      loadDynastyData({
+        ...base,
+        events: [
+          { ...validEvent, furtherReading: [{ label: '研究', url: 'https://example.org/paper', source: 'other' }] },
+        ],
+      }),
+    ).not.toThrow();
+  });
+
+  const validConcept = { id: 'c1', name: '制衡', summary: '权力相互牵制的制度设计', institutionIds: ['a'] };
+
+  it('接受带 concept 原子的数据集（concepts 数组已接入 schema）', () => {
+    expect(() => loadDynastyData({ ...base, concepts: [validConcept] })).not.toThrow();
+  });
+
+  it('拒绝 concept 悬空 institutionId（共享原子注册表校验）', () => {
+    expect(() =>
+      loadDynastyData({ ...base, concepts: [{ ...validConcept, institutionIds: ['ghost'] }] }),
+    ).toThrow();
+  });
+
+  it('拒绝 keyMoments 超过 3 条（ADR-0006 关键片段 1-3）', () => {
+    expect(() =>
+      loadDynastyData({
+        ...base,
+        events: [{ ...validEvent, keyMoments: ['一', '二', '三', '四'] }],
+      }),
+    ).toThrow();
+  });
+});

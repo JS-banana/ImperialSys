@@ -77,6 +77,74 @@ export const FigureSchema = z.strictObject({
   tags: z.array(z.string()).min(1),
 });
 
+// ─── 外链 / 深度契约（ADR-0006）─────────────────────────────────────
+// ExternalRef：唯一站外出口。host 强白名单（与 source 一致）见 DynastyDataSchema.superRefine。
+export const ExternalRefSchema = z
+  .strictObject({
+    label: z.string().min(1),
+    url: z.url(),
+    source: z.enum(['wikipedia', 'baidu', 'ctext', 'other']),
+  })
+  .superRefine((ref, ctx) => {
+    // 强白名单：须 https 且 host 与 source 一致（ADR-0006 权威源固化成硬门）。
+    let parsed: URL;
+    try {
+      parsed = new URL(ref.url);
+    } catch {
+      return; // z.url() 已保格式，理论不达
+    }
+    const host = parsed.host.toLowerCase();
+    const https = parsed.protocol === 'https:';
+    const hostOk =
+      ref.source === 'wikipedia'
+        ? host === 'wikipedia.org' || host.endsWith('.wikipedia.org')
+        : ref.source === 'baidu'
+          ? host === 'baike.baidu.com'
+          : ref.source === 'ctext'
+            ? host === 'ctext.org' || host.endsWith('.ctext.org')
+            : true; // other：任意 host，仅须 https
+    if (!https || !hostOk) {
+      ctx.addIssue({
+        code: 'custom',
+        message: `外链 "${ref.url}" 与 source "${ref.source}" 不符（须 https，且 host 属该源白名单）`,
+        path: ['url'],
+      });
+    }
+  });
+
+// 深度契约：全 optional（先 optional 后收紧）。可铺到任意原子。
+// links 互链站内原子（AtomRef "type:id"，注册表解析见 superRefine）；
+// citations/furtherReading 为站外史料/延伸阅读（克制靠后，ADR-0006）。
+const depthContractShape = {
+  institutionalRole: z.string().optional(),
+  keyMoments: z.array(z.string()).min(1).max(3).optional(),
+  links: z.array(z.string()).optional(),
+  citations: z.array(ExternalRefSchema).optional(),
+  furtherReading: z.array(ExternalRefSchema).optional(),
+};
+
+// ─── 内容原子（event / concept，P5）──────────────────────────────────
+// event：跨切面大事件升一等原子（数字 year 便排序）；timelines 叙事节拍另存、不动。
+
+export const EventAtomSchema = z.strictObject({
+  id: z.string().min(1),
+  name: z.string().min(1),
+  year: z.number().int(),
+  summary: z.string(),
+  institutionIds: z.array(z.string().min(1)).min(1),
+  tags: z.array(z.string()).min(1),
+  ...depthContractShape,
+});
+
+// concept：贯穿制度的抽象概念（制衡 / 票拟批红 / 三法司会审 / 军政分离）。
+export const ConceptAtomSchema = z.strictObject({
+  id: z.string().min(1),
+  name: z.string().min(1),
+  summary: z.string(),
+  institutionIds: z.array(z.string().min(1)).min(1),
+  ...depthContractShape,
+});
+
 // ─── DynastyTheme（表达令牌 + 站位）──────────────────────────────────
 // 见 ADR-0007 / 设计系统 §6.0。全字段必填 = 构建期硬门：缺槽位即构建失败，
 // 杜绝「写了一半的主题」静默渲染成明朝色（断线根因之一）。
@@ -121,6 +189,8 @@ export const DynastyDataSchema = z
     relations: z.array(RelationSchema),
     timelines: z.record(z.string(), z.array(TimelineEventSchema)),
     figures: z.record(z.string(), z.array(FigureSchema)),
+    events: z.array(EventAtomSchema).default([]),
+    concepts: z.array(ConceptAtomSchema).default([]),
   })
   .superRefine((data, ctx) => {
     // 机构 id 唯一性：下方引用校验用 Set(ids) 当真值源，重复 id 会被静默去重、
@@ -138,6 +208,16 @@ export const DynastyDataSchema = z
     });
 
     const institutionIds = new Set(data.institutions.map((i) => i.id));
+
+    // 全原子注册表：互链 AtomRef "type:id" 须命中其一（institution/figure/event/concept）
+    const atomRefs = new Set<string>([
+      ...data.institutions.map((i) => `institution:${i.id}`),
+      ...Object.values(data.figures)
+        .flat()
+        .map((f) => `figure:${f.id}`),
+      ...data.events.map((e) => `event:${e.id}`),
+      ...data.concepts.map((c) => `concept:${c.id}`),
+    ]);
 
     // 检查 relation 的 source/target 是否指向有效机构
     for (const rel of data.relations) {
@@ -178,6 +258,49 @@ export const DynastyDataSchema = z
         });
       }
     }
+
+    // 内容原子（event / concept）统一校验：id 同类型唯一 + institutionIds 指向存在机构
+    // + links 命中全原子注册表。新增原子类型时复用此函数即可。
+    const checkAtomRefs = (
+      atoms: ReadonlyArray<{ id: string; institutionIds: string[]; links?: string[] }>,
+      labelCn: string,
+      key: 'events' | 'concepts',
+    ) => {
+      const seen = new Set<string>();
+      atoms.forEach((atom, index) => {
+        if (seen.has(atom.id)) {
+          ctx.addIssue({
+            code: 'custom',
+            message: `${labelCn} id "${atom.id}" 重复（同类型原子 id 必须唯一）`,
+            path: [key, index, 'id'],
+          });
+        }
+        seen.add(atom.id);
+
+        atom.institutionIds.forEach((instId, j) => {
+          if (!institutionIds.has(instId)) {
+            ctx.addIssue({
+              code: 'custom',
+              message: `${labelCn} "${atom.id}" 的 institutionId "${instId}" 不是有效的机构 ID`,
+              path: [key, index, 'institutionIds', j],
+            });
+          }
+        });
+
+        (atom.links ?? []).forEach((link, j) => {
+          if (!atomRefs.has(link)) {
+            ctx.addIssue({
+              code: 'custom',
+              message: `${labelCn} "${atom.id}" 的 link "${link}" 未命中任何原子（注册表无此 AtomRef）`,
+              path: [key, index, 'links', j],
+            });
+          }
+        });
+      });
+    };
+
+    checkAtomRefs(data.events, '事件', 'events');
+    checkAtomRefs(data.concepts, '概念', 'concepts');
   });
 
 // ─── Inferred Types ──────────────────────────────────────────────────
