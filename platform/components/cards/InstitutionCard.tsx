@@ -19,6 +19,9 @@ export default function InstitutionCard({ institution, featured = false }: Insti
 
   return (
     <motion.article
+      // 机构原子的稳定 DOM 锚点：MiniStructureMap 导航据此定位分区滚动；
+      // P5 内容原子深链接 / P6 GSAP scroll-to-institution 复用同一锚点。
+      data-institution={institution.id}
       initial={{ opacity: 0, y: 36 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.35 }}

@@ -24,6 +24,8 @@ export default function DynastySection({
   children,
 }: DynastySectionProps) {
   return (
+    // 分区是滚动叙事的基本单元：section#id 同时作为 StickyNav/ScrollSpy 锚点，
+    // 以及 P6 GSAP ScrollTrigger 的钉屏/视差挂载点（P6 落地时间线，P3 不实装）。
     <section id={section.id} className="scroll-mt-24 py-16">
       <div className="mx-auto max-w-6xl px-8">
         <div className="rounded-[34px] border border-black/8 bg-[rgba(255,255,255,0.38)] px-8 py-9 shadow-[0_18px_40px_rgba(68,50,31,0.06)]">
