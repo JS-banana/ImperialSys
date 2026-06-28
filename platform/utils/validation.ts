@@ -77,6 +77,42 @@ export const FigureSchema = z.strictObject({
   tags: z.array(z.string()).min(1),
 });
 
+// ─── DynastyTheme（表达令牌 + 站位）──────────────────────────────────
+// 见 ADR-0007 / 设计系统 §6.0。全字段必填 = 构建期硬门：缺槽位即构建失败，
+// 杜绝「写了一半的主题」静默渲染成明朝色（断线根因之一）。
+export const DynastyThemeSchema = z.strictObject({
+  surface: z.strictObject({
+    paper: z.string().min(1),
+    bright: z.string().min(1),
+    dark: z.string().min(1),
+  }),
+  ink: z.strictObject({
+    strong: z.string().min(1),
+    muted: z.string().min(1),
+    subtle: z.string().min(1),
+  }),
+  accent: z.string().min(1),
+  accentWash: z.string().min(1),
+  accentAlt: z.string().min(1),
+  gold: z.string().min(1),
+  line: z.string().min(1),
+  bgGradient: z.string().min(1),
+  fonts: z.strictObject({
+    display: z.string().min(1),
+    heading: z.string().min(1),
+    body: z.string().min(1),
+    reading: z.string().min(1),
+    caption: z.string().min(1),
+  }),
+  decorative: z.strictObject({
+    pattern: z.string().min(1),
+    particle: z.string().min(1),
+  }),
+  density: z.enum(['compact', 'default', 'airy']),
+  shadowTint: z.string().min(1),
+  lineInk: z.string().min(1),
+});
+
 // ─── Combined DynastyData with Cross-Reference Checks ────────────────
 
 export const DynastyDataSchema = z
@@ -151,6 +187,7 @@ export type ValidatedRelation = z.infer<typeof RelationSchema>;
 export type ValidatedTimelineEvent = z.infer<typeof TimelineEventSchema>;
 export type ValidatedFigure = z.infer<typeof FigureSchema>;
 export type ValidatedDynastyData = z.infer<typeof DynastyDataSchema>;
+export type ValidatedDynastyTheme = z.infer<typeof DynastyThemeSchema>;
 export type ValidatedInstitutionCategory = z.infer<typeof InstitutionCategorySchema>;
 export type ValidatedRelationType = z.infer<typeof RelationTypeSchema>;
 export type ValidatedFunctionItem = z.infer<typeof FunctionItemSchema>;

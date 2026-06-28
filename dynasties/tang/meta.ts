@@ -1,5 +1,5 @@
 import type { DynastyData } from '@/platform/types';
-import { loadDynastyData } from '@/platform/utils';
+import { loadDynastyData, loadDynastyTheme } from '@/platform/utils';
 import { TANG_THEME } from './theme';
 import institutionsData from './data/institutions.json';
 import relationsData from './data/relations.json';
@@ -17,5 +17,5 @@ export function getTangDynastyData(): DynastyData {
     },
     '唐',
   );
-  return { ...data, theme: TANG_THEME };
+  return { ...data, theme: loadDynastyTheme(TANG_THEME, '唐') };
 }

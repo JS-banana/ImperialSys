@@ -1,5 +1,5 @@
 import type { DynastyData } from '@/platform/types';
-import { loadDynastyData } from '@/platform/utils';
+import { loadDynastyData, loadDynastyTheme } from '@/platform/utils';
 import { MING_THEME } from './theme';
 import institutionsData from './data/institutions.json';
 import relationsData from './data/relations.json';
@@ -17,5 +17,5 @@ export function getMingDynastyData(): DynastyData {
     },
     '明',
   );
-  return { ...data, theme: MING_THEME };
+  return { ...data, theme: loadDynastyTheme(MING_THEME, '明') };
 }

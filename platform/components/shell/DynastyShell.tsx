@@ -9,6 +9,7 @@ import { DataHelpersProvider } from '@/platform/context/DataHelpersContext';
 import StickyNav from './StickyNav';
 import ScrollProgress from './ScrollProgress';
 import DynastySection from './DynastySection';
+import DynastyThemeStyle from './DynastyThemeStyle';
 import { DetailDrawer } from '@/platform/components/drawer';
 
 // useSyncExternalStore 的空订阅：深链接初值只读一次，不订阅 URL 变化
@@ -62,21 +63,6 @@ export function DynastyShell({
   const selectedInstitution =
     userSelection === undefined ? deepLinkInstitution : userSelection;
 
-  // 应用朝代主题到 CSS 变量
-  useEffect(() => {
-    const root = document.documentElement;
-    root.style.setProperty('--dynasty-paper', data.theme.colors.paper);
-    root.style.setProperty('--dynasty-ink', data.theme.colors.ink);
-    root.style.setProperty('--dynasty-accent', data.theme.colors.accent);
-    root.style.setProperty('--dynasty-gold', data.theme.colors.gold);
-    if (data.theme.fonts.display) {
-      root.style.setProperty('--font-display', data.theme.fonts.display);
-    }
-    if (data.theme.fonts.body) {
-      root.style.setProperty('--font-body', data.theme.fonts.body);
-    }
-  }, [data.theme]);
-
   const sectionIds = useMemo(() => sectionConfigs.map((s) => s.id), [sectionConfigs]);
   const activeSectionId = useScrollSpy(sectionIds);
 
@@ -98,7 +84,15 @@ export function DynastyShell({
 
   return (
     <DataHelpersProvider data={data}>
-      <div className="relative pb-20">
+      {/* 服务端序列化朝代主题为作用域 <style>，零闪烁、单一真源 */}
+      <DynastyThemeStyle dynastyId={dynastyId} theme={data.theme} />
+      {/* data-dynasty 子树：主题令牌在此生效；包裹层自画 paper 底 + bgGradient，
+          完整复刻原 body 绘制（盖住 body，避免半透明渐变双重叠加） */}
+      <div
+        data-dynasty={dynastyId}
+        className="relative min-h-screen bg-background pb-20"
+        style={{ backgroundImage: 'var(--bg-gradient)' }}
+      >
         <StickyNav sections={sectionConfigs} activeId={activeSectionId} />
         <ScrollProgress />
 

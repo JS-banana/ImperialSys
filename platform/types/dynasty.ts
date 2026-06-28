@@ -32,24 +32,45 @@ export interface SectionDefinition extends SectionConfig {
   component: ComponentType<SectionProps>;
 }
 
-// ─── 朝代主题（纯数据，可序列化）────────────────────────────────
+// ─── 朝代密度站位（在共享间距阶梯上选档，非另起阶梯）──────────────
+export type DynastyDensity = 'compact' | 'default' | 'airy';
 
+// ─── 朝代主题（表达令牌 + 站位，纯数据可序列化）──────────────────
+// 见 ADR-0007（令牌分层）+ 设计系统 §6.0 语义槽位契约：
+// 只携带「表达令牌（色/字/纹样/氛围）+ 站位选择」；结构令牌（间距/圆角/阴影级数/
+// 字阶比例/动效）住平台、不进 theme。Zod 强制必填，构建期硬门。
 export interface DynastyTheme {
-  colors: {
-    paper: string;
-    ink: string;
-    accent: string;
-    accentAlt: string;
-    gold: string;
-  };
+  /** 宣纸底三阶 */
+  surface: { paper: string; bright: string; dark: string };
+  /** 墨三阶 */
+  ink: { strong: string; muted: string; subtle: string };
+  /** 招牌主色 + 低透染 */
+  accent: string;
+  accentWash: string;
+  /** 辅强调（点睛，克制少用）*/
+  accentAlt: string;
+  /** 金点缀 */
+  gold: string;
+  /** 描边墨（细发丝线）*/
+  line: string;
+  /** body 氛围渐变（完整 background-image 值）*/
+  bgGradient: string;
+  /** 字体角色（朝代各自把字体家族映射到这些角色）*/
   fonts: {
     display: string;
+    heading: string;
     body: string;
+    reading: string;
+    caption: string;
   };
-  decorative?: {
-    backgroundPattern?: string;
-    particleEffect?: string;
-  };
+  /** 纹样/质感（语义 id，P6/P8 消费）*/
+  decorative: { pattern: string; particle: string };
+  /** 站位：密度档（×0.85/×1.0/×1.15，P6 作用于结构阶梯）*/
+  density: DynastyDensity;
+  /** 站位：阴影暖度 tint */
+  shadowTint: string;
+  /** 站位：描边墨色基（本朝 ink 派生 line）*/
+  lineInk: string;
 }
 
 // ─── 朝代原始数据（不含 theme）───────────────────────────────────

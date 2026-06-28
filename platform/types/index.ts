@@ -19,6 +19,7 @@ export type {
   SectionProps,
   SectionDefinition,
   DynastyTheme,
+  DynastyDensity,
   DynastyRawData,
   DynastyData,
   DynastyMeta,
