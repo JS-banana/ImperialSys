@@ -45,7 +45,9 @@ next-env.d.ts
 
 # Project Management
 conductor/
-docs/
+docs/*
+!docs/adr/
+!docs/specs/
 node_modules/
 .next/
 out/
