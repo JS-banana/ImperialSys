@@ -84,7 +84,9 @@
   --destructive: #b44333;
   --border: rgba(68, 50, 31, 0.12);
   --input: rgba(68, 50, 31, 0.12);
-  --ring: rgba(192, 57, 43, 0.34);
+  /* 焦点轮廓＝本朝 accent 派生（color-mix 由 var(--vermillion) 在使用点解析，随 [data-dynasty] 跟色）。
+     明＝color-mix(#c0392b 34%)=rgba(192,57,43,0.34) 逐值不变；唐自动跟随深红朱。 */
+  --ring: color-mix(in srgb, var(--vermillion) 34%, transparent);
   --radius: 0.75rem;
 }
 
@@ -104,7 +106,8 @@
   }
 
   ::selection {
-    background: rgba(192, 57, 43, 0.16);
+    /* 选区高亮＝本朝 accent 16%（随 [data-dynasty] 子树跟色）；明＝rgba(192,57,43,0.16) 逐值不变 */
+    background: color-mix(in srgb, var(--vermillion) 16%, transparent);
     color: var(--ink-strong);
   }
 
