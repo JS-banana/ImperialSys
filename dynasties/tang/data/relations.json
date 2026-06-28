@@ -1,0 +1,180 @@
+{
+  "relations": [
+    {
+      "id": "r_emp_zhongshu",
+      "source": "emperor",
+      "target": "zhongshusheng",
+      "type": "command",
+      "label": "统辖",
+      "description": "皇帝通过中书省行使决策权，中书令作为宰相替皇帝起草诏令。中书省是皇帝意志转化为国家政令的第一道关口。"
+    },
+    {
+      "id": "r_emp_menxia",
+      "source": "emperor",
+      "target": "menxiasheng",
+      "type": "command",
+      "label": "统辖",
+      "description": "皇帝统辖门下省，门下省负责审核中书省起草的诏令。门下省的封驳权虽可制约皇权，但本质上仍对皇帝负责。"
+    },
+    {
+      "id": "r_emp_shangshu",
+      "source": "emperor",
+      "target": "shangshusheng",
+      "type": "command",
+      "label": "统辖",
+      "description": "皇帝统辖尚书省，尚书省统领六部执行政令。尚书令因太宗曾任此职后世不授，由左右仆射实际主持。"
+    },
+    {
+      "id": "r_emp_hanlin",
+      "source": "emperor",
+      "target": "hanlin",
+      "type": "direct",
+      "label": "直属",
+      "description": "翰林学士由皇帝亲自选拔，直接对皇帝负责，不受中书门下管辖。翰林学士起草内制，是皇帝的私人决策顾问，德宗以后被誉为「内相」。"
+    },
+    {
+      "id": "r_emp_yushitai",
+      "source": "emperor",
+      "target": "yushitai",
+      "type": "direct",
+      "label": "直属",
+      "description": "御史台直接对皇帝负责，监察百官。监察御史代天子巡狩地方，是皇帝监控全国官员的耳目。"
+    },
+    {
+      "id": "r_zhongshu_menxia",
+      "source": "zhongshusheng",
+      "target": "menxiasheng",
+      "type": "check",
+      "label": "出令-封驳 制衡",
+      "description": "中书省起草诏令（出令），门下省审核封驳。门下省认为不当者可驳回中书省诏令，形成决策层面的制度制衡，降低决策失误。这是唐初三省制的核心设计。"
+    },
+    {
+      "id": "r_menxia_shangshu",
+      "source": "menxiasheng",
+      "target": "shangshusheng",
+      "type": "cooperate",
+      "label": "审核-执行 衔接",
+      "description": "门下省审核通过的诏令，交由尚书省转发至六部及地方执行。门下省是政令发布的最后一道审核关，尚书省是政令落地的执行枢纽。"
+    },
+    {
+      "id": "r_zhongshu_hanlin",
+      "source": "zhongshusheng",
+      "target": "hanlin",
+      "type": "check",
+      "label": "外制-内制 制衡",
+      "description": "中书省负责「外制」（一般诏令），翰林学士负责「内制」（重要诏令）。两套诏令系统并存，翰林学士分走了中书省的部分决策权，形成内廷与外朝的制衡。"
+    },
+    {
+      "id": "r_zhongshu_zhengshitang",
+      "source": "zhongshusheng",
+      "target": "menxiasheng",
+      "type": "cooperate",
+      "label": "政事堂共议",
+      "description": "三省长官在政事堂共同议政。唐太宗时期确立此制度，中书令、侍中、尚书仆射集体讨论国政，形成集体宰相制。开元年间政事堂迁至中书省，改称「中书门下」。"
+    },
+    {
+      "id": "r_shangshu_libu",
+      "source": "shangshusheng",
+      "target": "libu",
+      "type": "command",
+      "label": "统辖",
+      "description": "尚书省统领吏部，吏部是六部之首，掌管全国文官铨选考核。吏部尚书因掌官员选授，被称为「铨衡之司」，实际权力有时超过尚书省长官。"
+    },
+    {
+      "id": "r_shangshu_hubu",
+      "source": "shangshusheng",
+      "target": "hubu",
+      "type": "command",
+      "label": "统辖",
+      "description": "尚书省统领户部，户部掌管全国财政赋税。开元以后设转运使、盐铁使等使职，户部的部分财权被分割。"
+    },
+    {
+      "id": "r_shangshu_liburite",
+      "source": "shangshusheng",
+      "target": "libu_rite",
+      "type": "command",
+      "label": "统辖",
+      "description": "尚书省统领礼部，礼部掌管礼仪、科举、外交。武则天时期科举地位大增，礼部因掌科举而权势日重。"
+    },
+    {
+      "id": "r_shangshu_bingbu",
+      "source": "shangshusheng",
+      "target": "bingbu",
+      "type": "command",
+      "label": "统辖",
+      "description": "尚书省统领兵部，兵部掌管武将选授和军政管理。安史之乱后节度使权力膨胀，兵部对地方军事的控制力大幅下降。"
+    },
+    {
+      "id": "r_shangshu_xingbu",
+      "source": "shangshusheng",
+      "target": "xingbu",
+      "type": "command",
+      "label": "统辖",
+      "description": "尚书省统领刑部，刑部掌管司法刑狱。刑部与大理寺、御史台合称「三司」，重大案件由三司会审。"
+    },
+    {
+      "id": "r_shangshu_gongbu",
+      "source": "shangshusheng",
+      "target": "gongbu",
+      "type": "command",
+      "label": "统辖",
+      "description": "尚书省统领工部，工部掌管工程营建、屯田水利。工部在六部中地位最低，但承担大量基础设施建设。"
+    },
+    {
+      "id": "r_yushitai_sansheng",
+      "source": "yushitai",
+      "target": "zhongshusheng",
+      "type": "supervise",
+      "label": "监察",
+      "description": "御史台监察中书省官员的行为。御史可以弹劾中书省任何官员的不法失职行为，包括中书令在内。"
+    },
+    {
+      "id": "r_yushitai_menxia",
+      "source": "yushitai",
+      "target": "menxiasheng",
+      "type": "supervise",
+      "label": "监察",
+      "description": "御史台监察门下省官员。门下省虽有封驳权，但其官员同样受御史台监察，形成权力的交叉制约。"
+    },
+    {
+      "id": "r_yushitai_shangshu",
+      "source": "yushitai",
+      "target": "shangshusheng",
+      "type": "supervise",
+      "label": "监察",
+      "description": "御史台监察尚书省及六部官员。御史可弹劾六部尚书、侍郎等各级官员的不法行为。"
+    },
+    {
+      "id": "r_yushitai_xingbu",
+      "source": "yushitai",
+      "target": "xingbu",
+      "type": "cooperate",
+      "label": "三司会审",
+      "description": "御史台与刑部、大理寺合称「三司」，重大案件由三司长官共同审理，称为「三司会审」，确保司法公正。"
+    },
+    {
+      "id": "r_emp_jiedushi",
+      "source": "emperor",
+      "target": "jiedushi",
+      "type": "command",
+      "label": "名义统辖",
+      "description": "节度使名义上由皇帝任命，对皇帝负责。但安史之乱后，强藩节度使自行世袭、截留赋税，中央对其实控力大幅下降，形成藩镇割据。"
+    },
+    {
+      "id": "r_jiedushi_bingbu",
+      "source": "jiedushi",
+      "target": "bingbu",
+      "type": "check",
+      "label": "军权分割",
+      "description": "节度使掌握地方军权，与兵部的中央军政权形成对立。安史之乱后，兵部对藩镇军队几乎没有约束力，中央与地方的军事权力严重失衡。"
+    },
+    {
+      "id": "r_hanlin_cabinet_check",
+      "source": "hanlin",
+      "target": "zhongshusheng",
+      "type": "check",
+      "label": "内相制约",
+      "description": "翰林学士参与机密决策，分走中书省的部分决策权。德宗以后翰林学士被称为「内相」，形成与中书门下并立的「二府制」格局。"
+    }
+  ]
+}

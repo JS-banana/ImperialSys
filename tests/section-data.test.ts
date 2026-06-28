@@ -1,27 +1,27 @@
 import { describe, expect, it } from 'vitest';
-import institutionsData from '../data/institutions.json';
-import relationsData from '../data/relations.json';
-import { SECTION_CONFIG } from '../lib/sectionConfig';
-import {
-  getInstitutionRelations,
-  getInstitutionsBySection,
-  getSectionForInstitution,
-} from '../lib/dataHelpers';
+import institutionsData from '../dynasties/ming/data/institutions.json';
+import relationsData from '../dynasties/ming/data/relations.json';
+import { MING_SECTIONS } from '../dynasties/ming/sections';
+import { createDataHelpers } from '../platform/utils/dataHelpers';
+
+const helpers = createDataHelpers({
+  institutions: institutionsData.institutions,
+  relations: relationsData.relations,
+  timelines: {},
+  figures: {},
+});
 
 describe('section narrative config', () => {
   it('covers every institution exactly once', () => {
     const allInstitutionIds = institutionsData.institutions.map((institution) => institution.id).sort();
-    const configuredIds = SECTION_CONFIG.flatMap((section) => section.institutionIds).sort();
+    const configuredIds = MING_SECTIONS.flatMap((section) => section.institutionIds).sort();
 
     expect(configuredIds).toEqual(allInstitutionIds);
   });
 
   it('references only relation ids that exist in the data source', () => {
     const knownRelationIds = new Set(relationsData.relations.map((relation) => relation.id));
-    const configuredRelationIds = SECTION_CONFIG.flatMap((section) => [
-      ...section.intraRelationIds,
-      ...section.interRelationIds,
-    ]);
+    const configuredRelationIds = MING_SECTIONS.flatMap((section) => section.relationIds ?? []);
 
     expect(configuredRelationIds.every((relationId) => knownRelationIds.has(relationId))).toBe(true);
   });
@@ -29,10 +29,10 @@ describe('section narrative config', () => {
 
 describe('section data helpers', () => {
   it('returns section institutions in the configured narrative order', () => {
-    const administrativeSection = SECTION_CONFIG.find((section) => section.title === '六部执行');
+    const administrativeSection = MING_SECTIONS.find((section) => section.title === '六部执行');
 
     expect(administrativeSection).toBeDefined();
-    expect(getInstitutionsBySection(administrativeSection!)).toMatchObject([
+    expect(helpers.getInstitutionsByIds(administrativeSection!.institutionIds)).toMatchObject([
       { id: 'libu' },
       { id: 'hubu' },
       { id: 'libu2' },
@@ -43,7 +43,7 @@ describe('section data helpers', () => {
   });
 
   it('collects incoming and outgoing relations for the cabinet', () => {
-    const relationMap = getInstitutionRelations('cabinet');
+    const relationMap = helpers.getInstitutionRelations('cabinet');
 
     expect(relationMap.incoming.map((relation) => relation.id)).toEqual([
       'r_emp_cabinet',
@@ -62,7 +62,10 @@ describe('section data helpers', () => {
   });
 
   it('finds the section that owns a given institution', () => {
-    expect(getSectionForInstitution('dongchang')?.title).toBe('暗处之眼');
-    expect(getSectionForInstitution('emperor')?.title).toBe('皇权独尊');
+    const findSection = (institutionId: string) =>
+      MING_SECTIONS.find((s) => s.institutionIds.includes(institutionId));
+
+    expect(findSection('dongchang')?.title).toBe('暗处之眼');
+    expect(findSection('emperor')?.title).toBe('皇权独尊');
   });
 });
