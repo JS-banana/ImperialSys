@@ -1,6 +1,14 @@
-import type { SectionConfig } from '@/platform/types';
+import type { SectionDefinition } from '@/platform/types';
+import ImperialCore from './sections/ImperialCore';
+import CentralBalance from './sections/CentralBalance';
+import Administration from './sections/Administration';
+import Oversight from './sections/Oversight';
+import Military from './sections/Military';
+import SecretPolice from './sections/SecretPolice';
 
-export const MING_SECTIONS: SectionConfig[] = [
+// 静态分区定义：config + component，编译期静态、无副作用。
+// page(Server) 据此组合分区进 SSR——取代旧的运行时 section-registry 注册。
+export const SECTIONS: SectionDefinition[] = [
   {
     id: 'imperial-core',
     title: '皇权独尊',
@@ -10,6 +18,7 @@ export const MING_SECTIONS: SectionConfig[] = [
     layout: 'featured',
     institutionIds: ['emperor'],
     relationIds: ['r_emp_cabinet', 'r_emp_sili', 'r_emp_jinyi', 'r_emp_wujun'],
+    component: ImperialCore,
   },
   {
     id: 'central-balance',
@@ -25,6 +34,7 @@ export const MING_SECTIONS: SectionConfig[] = [
       'r_cabinet_bingbu', 'r_cabinet_xingbu', 'r_cabinet_gongbu',
       'r_sili_dongchang',
     ],
+    component: CentralBalance,
   },
   {
     id: 'administration',
@@ -38,6 +48,7 @@ export const MING_SECTIONS: SectionConfig[] = [
       'r_duchayuan_libu', 'r_duchayuan_hubu', 'r_duchayuan_bingbu',
       'r_duchayuan_xingbu', 'r_bingbu_wujun',
     ],
+    component: Administration,
   },
   {
     id: 'oversight',
@@ -51,6 +62,7 @@ export const MING_SECTIONS: SectionConfig[] = [
       'r_sanjusi_cooperate', 'r_dalisi_xingbu',
       'r_tongzheng_cabinet', 'r_duchayuan_cabinet',
     ],
+    component: Oversight,
   },
   {
     id: 'military',
@@ -61,6 +73,7 @@ export const MING_SECTIONS: SectionConfig[] = [
     layout: 'featured',
     institutionIds: ['wujun'],
     relationIds: ['r_bingbu_wujun'],
+    component: Military,
   },
   {
     id: 'secret-police',
@@ -71,5 +84,6 @@ export const MING_SECTIONS: SectionConfig[] = [
     layout: 'split',
     institutionIds: ['jinyiwei', 'dongchang'],
     relationIds: ['r_sili_dongchang', 'r_dongchang_jinyi'],
+    component: SecretPolice,
   },
 ];

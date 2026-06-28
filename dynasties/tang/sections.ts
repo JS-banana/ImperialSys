@@ -1,6 +1,12 @@
-import type { SectionConfig } from '@/platform/types';
+import type { SectionDefinition } from '@/platform/types';
+import ImperialCenter from './sections/ImperialCenter';
+import SixMinistries from './sections/SixMinistries';
+import OversightInner from './sections/OversightInner';
+import RegionalMilitary from './sections/RegionalMilitary';
 
-export const TANG_SECTIONS: SectionConfig[] = [
+// 静态分区定义：config + component，编译期静态、无副作用。
+// page(Server) 据此组合分区进 SSR——取代旧的运行时 section-registry 注册。
+export const SECTIONS: SectionDefinition[] = [
   {
     id: 'imperial-center',
     title: '皇权与三省',
@@ -13,6 +19,7 @@ export const TANG_SECTIONS: SectionConfig[] = [
       'r_emp_zhongshu', 'r_emp_menxia', 'r_emp_shangshu',
       'r_zhongshu_menxia', 'r_menxia_shangshu', 'r_zhongshu_zhengshitang',
     ],
+    component: ImperialCenter,
   },
   {
     id: 'six-ministries',
@@ -26,6 +33,7 @@ export const TANG_SECTIONS: SectionConfig[] = [
       'r_shangshu_libu', 'r_shangshu_hubu', 'r_shangshu_liburite',
       'r_shangshu_bingbu', 'r_shangshu_xingbu', 'r_shangshu_gongbu',
     ],
+    component: SixMinistries,
   },
   {
     id: 'oversight-inner',
@@ -39,6 +47,7 @@ export const TANG_SECTIONS: SectionConfig[] = [
       'r_yushitai_sansheng', 'r_yushitai_menxia', 'r_yushitai_shangshu',
       'r_yushitai_xingbu', 'r_hanlin_cabinet_check', 'r_emp_hanlin', 'r_emp_yushitai',
     ],
+    component: OversightInner,
   },
   {
     id: 'regional-military',
@@ -49,5 +58,6 @@ export const TANG_SECTIONS: SectionConfig[] = [
     layout: 'featured',
     institutionIds: ['jiedushi'],
     relationIds: ['r_emp_jiedushi', 'r_jiedushi_bingbu'],
+    component: RegionalMilitary,
   },
 ];

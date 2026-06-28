@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { createDataHelpers, loadDynastyData } from '../platform/utils';
-import { MING_SECTIONS } from '../dynasties/ming/sections';
-import { TANG_SECTIONS } from '../dynasties/tang/sections';
+import { SECTIONS as MING_SECTIONS } from '../dynasties/ming/sections';
+import { SECTIONS as TANG_SECTIONS } from '../dynasties/tang/sections';
 import mingInstitutions from '../dynasties/ming/data/institutions.json';
 import mingRelations from '../dynasties/ming/data/relations.json';
 import mingTimelines from '../dynasties/ming/data/timelines.json';

@@ -1,5 +1,3 @@
-'use client';
-
 import type { SectionProps } from '@/platform/types';
 import { InstitutionCard } from '@/platform/components/cards';
 import RelationDiagram from '@/dynasties/ming/components/RelationDiagram';

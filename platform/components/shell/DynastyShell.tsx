@@ -1,50 +1,45 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
+import { type ReactNode, useMemo } from 'react';
 import type { DynastyData, SectionConfig } from '@/platform/types';
 import { useScrollSpy } from '@/platform/hooks/useScrollSpy';
-import { getSectionComponent } from '@/platform/components/section-registry';
-import { createDataHelpers } from '@/platform/utils';
 import { DataHelpersProvider } from '@/platform/context/DataHelpersContext';
 import { SelectionProvider } from '@/platform/context/SelectionContext';
 import StickyNav from './StickyNav';
 import ScrollProgress from './ScrollProgress';
-import DynastySection from './DynastySection';
 import DynastyThemeStyle from './DynastyThemeStyle';
 import { DetailDrawer } from '@/platform/components/drawer';
 
 interface DynastyShellProps {
   dynastyId: string;
   data: DynastyData;
-  sectionConfigs: SectionConfig[];
-  registerSections: () => void;
+  /** Nav/ScrollSpy 的分区 config（已在 page 端剥离 component，可序列化）*/
+  sections: SectionConfig[];
   /** 朝代页脚结语（去明朝化：平台不再硬写「以明朝为起点…」，由各朝代提供）*/
   footerNote: string;
   /** 朝代自定义 Hero 组件（可选），渲染在分区之前。接收 data 作为 props */
   hero?: React.ComponentType<{ data: DynastyData }>;
+  /** page(Server) 组合好的分区树——分区 DOM 在此进入 SSR */
+  children: ReactNode;
 }
 
+/**
+ * 朝代外壳（交互层）：Providers + Nav + Progress + Drawer + 主题作用域包裹层。
+ * 分区不再由本组件运行时注册/渲染——改由 page(Server) 静态组合后作为 children 传入，
+ * 真正进入 SSR。DataHelpers/Selection 均为「本朝代页」级关注点，故留 shell（非 layout）；
+ * P8 持久转场覆盖层才上提 layout。
+ */
 export function DynastyShell({
   dynastyId,
   data,
-  sectionConfigs,
-  registerSections,
+  sections,
   footerNote,
   hero,
+  children,
 }: DynastyShellProps) {
-  // 创建朝代数据查询工具（从 props 数据实例化，不依赖全局状态）
-  const dataHelpers = useMemo(() => createDataHelpers(data), [data]);
-
-  // 注册朝代 Section 组件（P3 Slice B 将以 page 端静态组合取代本运行时注册）
-  useEffect(() => {
-    registerSections();
-  }, [registerSections]);
-
-  const sectionIds = useMemo(() => sectionConfigs.map((s) => s.id), [sectionConfigs]);
+  const sectionIds = useMemo(() => sections.map((s) => s.id), [sections]);
   const activeSectionId = useScrollSpy(sectionIds);
 
-  // 选中态 + 深链接由通用 SelectionProvider 承接；DataHelpers/Selection 均为「本朝代页」
-  // 级别的关注点，故留在 shell（非 layout）；P8 持久转场覆盖层才上提 layout。
   return (
     <DataHelpersProvider data={data}>
       <SelectionProvider>
@@ -57,7 +52,7 @@ export function DynastyShell({
           className="relative min-h-screen bg-background pb-20"
           style={{ backgroundImage: 'var(--bg-gradient)' }}
         >
-          <StickyNav sections={sectionConfigs} activeId={activeSectionId} />
+          <StickyNav sections={sections} activeId={activeSectionId} />
           <ScrollProgress />
 
           <main className="space-y-2">
@@ -69,27 +64,7 @@ export function DynastyShell({
                 })()}
               </div>
             )}
-            {sectionConfigs.map((config, index) => {
-              const SectionComponent = getSectionComponent(dynastyId, config.id);
-              if (!SectionComponent) return null;
-
-              const sectionInstitutions = dataHelpers.getInstitutionsByIds(config.institutionIds);
-              const sectionRelations = dataHelpers.getRelationsByIds(config.relationIds ?? []);
-
-              return (
-                <DynastySection
-                  key={config.id}
-                  index={index}
-                  section={config}
-                  institutionCount={sectionInstitutions.length}
-                >
-                  <SectionComponent
-                    institutions={sectionInstitutions}
-                    relations={sectionRelations}
-                  />
-                </DynastySection>
-              );
-            })}
+            {children}
           </main>
 
           <footer className="mx-auto mt-8 max-w-6xl px-8 text-center text-sm leading-7 text-[var(--ink-subtle)]">
