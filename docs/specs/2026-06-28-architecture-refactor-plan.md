@@ -113,6 +113,15 @@
 - 分区进 SSR 后 hydration mismatch（medium）→ window 只放 effect、进场用 whileInView、build 后 diff out/
 - 门户重资产首帧卡顿（high）→ 专属门户增量、覆盖期 `Image.decode()`/预取、仅 transform/opacity、桌面专属
 
+## 目录结构 / 代码规范 / 依赖现代化（2026-06-28 用户确认：并入 P 阶段，不单独前置）
+
+界面设计会话中用户提出「目录乱、代码没强制规范、依赖应用先进方案」，确认**并入架构 P 阶段逐步定**，在此登记落点避免遗漏：
+
+- **代码规范（P1）**：除修绿 tsc/eslint + `typecheck`/`ci` 脚本 + CI 外，补 prettier + import 顺序；新增《代码规范》文档（命名 / 目录约定 / Server-Client 边界 / 测试位置）并由 lint+CI 强制。
+- **目标目录树（P3/P4）**：P3 渲染模型 + P4 manifest/路由落定后，产出一张「目标目录树」总图作单一参照；**收口根 `components/`（shadcn）与 `platform/components/` 的双份组件家**（明确 shadcn ui 归处 vs 平台组件归处）。
+- **依赖现代化（P6 等）**：`framer-motion` → 官方新包 `motion`（`import "motion/react"`）；按需新增 `@gsap/react`(P6)、`@next/mdx`+`velite`(P5)、`d3-shape`+`elkjs` 离线(P7)。栈主体（Next16 / React19 / Tailwind4 / Zod4 / Base UI / GSAP）已最新，无需大改。
+- **工程卫生**：清 `conductor/` 残留；`scratchpad/` 已 gitignore；产物（`*.tsbuildinfo` 等）确认忽略。
+
 ## 下一步
 
 进入**执行**：从 **P1 质量门** 起步（低风险、为后续一切立回归安全网），逐步小步提交。
