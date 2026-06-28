@@ -73,10 +73,12 @@ function AnimatedPath({
       strokeWidth="2.5"
       strokeDasharray={dash}
       markerEnd={markerEnd}
-      initial={reduceMotion ? false : { pathLength: 0, opacity: 0.4 }}
-      whileInView={reduceMotion ? undefined : { pathLength: 1, opacity: 1 }}
+      // initial/whileInView 恒定（服务端可渲、SSR 与客户端首帧逐字节一致，杜绝水合不一致）；
+      // 仅 transition 降级：reduced-motion 用 duration:0 瞬达终态（无可感运动、不停留隐藏态）。
+      initial={{ pathLength: 0, opacity: 0.4 }}
+      whileInView={{ pathLength: 1, opacity: 1 }}
       viewport={{ once: true, amount: 0.55 }}
-      transition={{ duration: 0.8, ease: 'easeOut' }}
+      transition={reduceMotion ? { duration: 0 } : { duration: 0.8, ease: 'easeOut' }}
     />
   );
 }

@@ -117,9 +117,11 @@ export default function MiniStructureMap({ institutions, onNavigate }: MiniStruc
               stroke={stroke}
               strokeWidth="1.4"
               strokeDasharray={sourceId === 'dongchang' ? '6 4' : undefined}
-              initial={reduceMotion ? false : { pathLength: 0, opacity: 0.35 }}
-              animate={reduceMotion ? undefined : { pathLength: 1, opacity: 0.72 }}
-              transition={{ delay: index * 0.04, duration: 0.5, ease: 'easeOut' }}
+              // initial/animate 恒定（服务端可渲、SSR 与客户端首帧逐字节一致，杜绝水合不一致）；
+              // 仅 transition 降级：reduced-motion 用 duration:0 瞬达终态（无可感运动、不停留隐藏态）。
+              initial={{ pathLength: 0, opacity: 0.35 }}
+              animate={{ pathLength: 1, opacity: 0.72 }}
+              transition={reduceMotion ? { duration: 0 } : { delay: index * 0.04, duration: 0.5, ease: 'easeOut' }}
             />
           );
         })}
@@ -129,9 +131,9 @@ export default function MiniStructureMap({ institutions, onNavigate }: MiniStruc
           .map((institution, index) => (
             <motion.g
               key={institution.id}
-              initial={reduceMotion ? false : { opacity: 0, y: 10 }}
-              animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 + index * 0.035, duration: 0.35 }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={reduceMotion ? { duration: 0 } : { delay: 0.2 + index * 0.035, duration: 0.35 }}
             >
               <StructureNode institution={institution} onNavigate={onNavigate} />
             </motion.g>
