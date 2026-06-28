@@ -1,8 +1,8 @@
 import Link from 'next/link';
-import { getDynastyList } from '@/data/dynasty-registry';
+import { getDynastyMetaList } from '@/platform/registry';
 
 export default function HomePage() {
-  const dynasties = getDynastyList();
+  const dynasties = getDynastyMetaList();
 
   return (
     <div className="min-h-screen bg-[var(--paper,#F5F0E8)]">
@@ -45,13 +45,13 @@ export default function HomePage() {
               <div className="text-xs uppercase tracking-[0.28em] text-[var(--ink-subtle,#5C5C5C)]">
                 {dynasty.period}
               </div>
-              <h3 className="mt-4 font-heading text-3xl tracking-[0.18em] text-[var(--ink-strong,#2C2C2C)] transition-colors group-hover:text-[var(--accent,#C0392B)]">
+              <h3 className="mt-4 font-heading text-3xl tracking-[0.18em] text-[var(--ink-strong,#2C2C2C)] transition-colors group-hover:text-[var(--vermillion,#C0392B)]">
                 {dynasty.name}
               </h3>
               <p className="mt-4 text-sm leading-7 text-[var(--ink-muted,#5C5C5C)]">
                 {dynasty.description}
               </p>
-              <div className="mt-6 inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-[var(--accent,#C0392B)]">
+              <div className="mt-6 inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-[var(--vermillion,#C0392B)]">
                 进入展厅
                 <span className="transition-transform group-hover:translate-x-1">→</span>
               </div>

@@ -98,20 +98,26 @@ export interface DynastyMeta {
   description: string;
 }
 
-// ─── 朝代完整模块（Client 端使用，含组件引用）───────────────────
+// ─── 朝代清单（manifest）：新增朝代 = 写 manifest + registry 注册一行 ────────
+// server 段：meta + getData（经 loader 校验，返回含 theme 的精确数据）+ sections + footerNote。
+// 全为纯服务端数据，首页 / generateStaticParams / generateMetadata 可安全引入。
+// client 段（hero）刻意不在此——走 platform/dynasty-client-map.ts 显式 import map：
+// output:'export' 下禁变量 dynamic import，且让 registry 保持纯数据、不把 client 组件拖进首页图。
+// P7/P8 表达字段先占类型不实装（「能力住平台、表达住朝代」，见 ADR-0007）。
 
-export interface DynastyModule {
+/** P7 招牌场景（关系图谱布局）占位，P7 实装具体结构 */
+export type SignatureScene = unknown;
+/** P8 穿越转场配置占位，P8 实装 */
+export type DynastyTransition = unknown;
+/** P8 门户场景占位，P8 实装 */
+export type DynastyPortal = unknown;
+
+export interface DynastyManifest {
   meta: DynastyMeta;
-  theme: DynastyTheme;
+  getData: () => DynastyData;
   sections: SectionDefinition[];
-  rawData: DynastyRawData;
-}
-
-// ─── 朝代注册配置（用于 registry）────────────────────────────────
-
-export interface DynastyConfig {
-  id: string;
-  name: string;
-  period: string;
-  description: string;
+  footerNote: string;
+  signatureScene?: SignatureScene;
+  transition?: DynastyTransition;
+  portal?: DynastyPortal;
 }

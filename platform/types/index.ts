@@ -23,6 +23,8 @@ export type {
   DynastyRawData,
   DynastyData,
   DynastyMeta,
-  DynastyModule,
-  DynastyConfig,
+  DynastyManifest,
+  SignatureScene,
+  DynastyTransition,
+  DynastyPortal,
 } from './dynasty';
