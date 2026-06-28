@@ -1,15 +1,28 @@
 'use client';
 
-import { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import { type ReactNode, useCallback, useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import type { DynastyData, Institution, SectionConfig } from '@/platform/types';
 import { useScrollSpy } from '@/platform/hooks/useScrollSpy';
 import { getSectionComponent } from '@/platform/components/section-registry';
-import { createDataHelpers } from '@/platform/utils';
+import { createDataHelpers, type DataHelpers } from '@/platform/utils';
 import { DataHelpersProvider } from '@/platform/context/DataHelpersContext';
 import StickyNav from './StickyNav';
 import ScrollProgress from './ScrollProgress';
 import DynastySection from './DynastySection';
 import { DetailDrawer } from '@/platform/components/drawer';
+
+// useSyncExternalStore 的空订阅：深链接初值只读一次，不订阅 URL 变化
+const subscribeToNothing = () => () => {};
+
+/**
+ * 仅客户端：从 ?institution=xxx 读取深链接机构。
+ * SSR / 水合期返回 null（与静态 HTML 的抽屉关闭态一致），避免水合不一致。
+ */
+function readDeepLinkInstitution(dataHelpers: DataHelpers): Institution | null {
+  if (typeof window === 'undefined') return null;
+  const institutionId = new URLSearchParams(window.location.search).get('institution');
+  return institutionId ? dataHelpers.getInstitutionById(institutionId) ?? null : null;
+}
 
 interface DynastyShellProps {
   dynastyId: string;
@@ -27,8 +40,6 @@ export function DynastyShell({
   registerSections,
   hero,
 }: DynastyShellProps) {
-  const [selectedInstitution, setSelectedInstitution] = useState<Institution | null>(null);
-
   // 创建朝代数据查询工具（从 props 数据实例化，不依赖全局状态）
   const dataHelpers = useMemo(() => createDataHelpers(data), [data]);
 
@@ -37,17 +48,19 @@ export function DynastyShell({
     registerSections();
   }, [registerSections]);
 
-  // 深链接支持：从 URL 参数 ?institution=xxx 自动打开详情抽屉
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const institutionId = params.get('institution');
-    if (institutionId) {
-      const inst = dataHelpers.getInstitutionById(institutionId);
-      if (inst) {
-        setSelectedInstitution(inst);
-      }
-    }
-  }, [dataHelpers]);
+  // 深链接：?institution=xxx 决定初始选中机构。
+  // useSyncExternalStore 在 SSR / 水合期返回 null（与静态 HTML 抽屉关闭态一致），
+  // 挂载后切到 URL 派生值——既无 set-state-in-effect 级联渲染，也无水合不一致。
+  const deepLinkInstitution = useSyncExternalStore(
+    subscribeToNothing,
+    () => readDeepLinkInstitution(dataHelpers),
+    () => null,
+  );
+
+  // undefined = 用户尚未操作（沿用深链接初值）；null = 用户已关闭；Institution = 用户已选。
+  const [userSelection, setUserSelection] = useState<Institution | null | undefined>(undefined);
+  const selectedInstitution =
+    userSelection === undefined ? deepLinkInstitution : userSelection;
 
   // 应用朝代主题到 CSS 变量
   useEffect(() => {
@@ -68,7 +81,7 @@ export function DynastyShell({
   const activeSectionId = useScrollSpy(sectionIds);
 
   const handleSelectInstitution = useCallback((inst: Institution | null) => {
-    setSelectedInstitution(inst);
+    setUserSelection(inst);
     // 更新 URL 深链接
     const url = new URL(window.location.href);
     if (inst) {
