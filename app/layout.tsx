@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
 import './globals.css';
 
+// 站点级中性默认（覆盖首页 / 非朝代页）。朝代页 title/description 由
+// app/dynasty/[dynastyId] 的 generateMetadata 按朝代覆盖（不再硬写明朝）。
 export const metadata: Metadata = {
-  title: '明朝政治制度可视化',
-  description: '以纵向叙事与关系图解形式，直观呈现明朝中央政治制度的权力结构、制衡逻辑与历史人物。',
+  title: '中国古代政治制度可视化',
+  description: '以数字博物馆理念，用滚动叙事与交互图解直观呈现中国古代历朝的权力结构与制度设计。',
 };
 
 export default function RootLayout({
