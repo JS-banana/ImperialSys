@@ -1,4 +1,4 @@
-import type { Institution, TimelineEvent, Figure } from '../types/institution';
+import type { Institution, TimelineEvent, Figure, EventAtom } from '../types/institution';
 import type { Relation } from '../types/relation';
 import type { SectionConfig } from '../types/dynasty';
 
@@ -9,6 +9,7 @@ export interface DataSource {
   relations: Relation[];
   timelines: Record<string, TimelineEvent[]>;
   figures: Figure[];
+  events: EventAtom[];
 }
 
 // ─── 创建数据查询工具（工厂模式，支持任意数据源）────────────────
@@ -96,6 +97,18 @@ export function createDataHelpers(source: DataSource) {
     getFigures(institutionId: string): Figure[] {
       // 扁平原子按 institutionIds 多对多过滤派生（签名不变；同一人物可属多机构）
       return source.figures.filter((figure) => figure.institutionIds.includes(institutionId));
+    },
+
+    getEvents(): EventAtom[] {
+      return source.events;
+    },
+
+    getEventById(id: string): EventAtom | undefined {
+      return source.events.find((event) => event.id === id);
+    },
+
+    getEventsByInstitution(institutionId: string): EventAtom[] {
+      return source.events.filter((event) => event.institutionIds.includes(institutionId));
     },
 
     getDataSource(): DataSource {

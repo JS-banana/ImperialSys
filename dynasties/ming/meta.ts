@@ -5,6 +5,7 @@ import institutionsData from './data/institutions.json';
 import relationsData from './data/relations.json';
 import timelinesData from './data/timelines.json';
 import figuresData from './data/figures.json';
+import eventsData from './data/events.json';
 
 export function getMingDynastyData(): DynastyData {
   // 经 loader 校验：数据完整性成构建期硬门，返回精确类型（无需 as 强转）
@@ -14,6 +15,7 @@ export function getMingDynastyData(): DynastyData {
       relations: relationsData.relations,
       timelines: timelinesData.timelines,
       figures: figuresData.figures,
+      events: eventsData.events,
     },
     '明',
   );

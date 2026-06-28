@@ -6,6 +6,7 @@ export type {
   Institution,
   TimelineEvent,
   Figure,
+  EventAtom,
 } from './institution';
 
 export type {

@@ -57,3 +57,13 @@ export interface Figure {
   tags: string[];
   institutionIds: string[];
 }
+
+// 事件（一等原子：跨切面大事件，数字 year 便排序；timelines 叙事节拍另存、不并入）
+export interface EventAtom {
+  id: string;
+  name: string;
+  year: number;
+  summary: string;
+  institutionIds: string[];
+  tags: string[];
+}

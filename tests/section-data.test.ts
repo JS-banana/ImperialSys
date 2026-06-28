@@ -6,6 +6,7 @@ import mingInstitutions from '../dynasties/ming/data/institutions.json';
 import mingRelations from '../dynasties/ming/data/relations.json';
 import mingTimelines from '../dynasties/ming/data/timelines.json';
 import mingFigures from '../dynasties/ming/data/figures.json';
+import mingEvents from '../dynasties/ming/data/events.json';
 import tangInstitutions from '../dynasties/tang/data/institutions.json';
 import tangRelations from '../dynasties/tang/data/relations.json';
 import tangTimelines from '../dynasties/tang/data/timelines.json';
@@ -340,5 +341,35 @@ describe('② figure 扁平升原子（多对多）', () => {
     expect(() =>
       loadDynastyData({ institutions: [inst], relations: [], timelines: {}, figures: [f, { ...f, name: '乙' }] }),
     ).toThrow(/重复|唯一/);
+  });
+});
+
+// ─── ③ event 一等原子（helper + 种子数据）───
+
+describe('③ event 一等原子', () => {
+  const ming = loadDynastyData(
+    {
+      institutions: mingInstitutions.institutions,
+      relations: mingRelations.relations,
+      timelines: mingTimelines.timelines,
+      figures: mingFigures.figures,
+      events: mingEvents.events,
+    },
+    '明',
+  );
+  const helpers = createDataHelpers(ming);
+
+  it('getEvents 返回全部种子事件', () => {
+    expect(helpers.getEvents().map((e) => e.id)).toEqual(['hu_weiyong_case', 'tumu_crisis', 'duomen_coup']);
+  });
+
+  it('getEventById 按 id 取单个事件', () => {
+    expect(helpers.getEventById('tumu_crisis')?.name).toBe('土木堡之变');
+    expect(helpers.getEventById('nope')).toBeUndefined();
+  });
+
+  it('getEventsByInstitution 按机构多对多过滤（土木堡 ∈ 司礼监）', () => {
+    expect(helpers.getEventsByInstitution('silijian').map((e) => e.id)).toContain('tumu_crisis');
+    expect(helpers.getEventsByInstitution('emperor').map((e) => e.id)).toContain('hu_weiyong_case');
   });
 });

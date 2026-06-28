@@ -1,4 +1,4 @@
-import type { Institution, TimelineEvent, Figure } from './institution';
+import type { Institution, TimelineEvent, Figure, EventAtom } from './institution';
 import type { Relation } from './relation';
 import type { ComponentType } from 'react';
 
@@ -81,6 +81,7 @@ export interface DynastyRawData {
   relations: Relation[];
   timelines: Record<string, TimelineEvent[]>;
   figures: Figure[];
+  events: EventAtom[];
 }
 
 // ─── 朝代数据包（Server -> Client 传递用，可序列化）────────────
