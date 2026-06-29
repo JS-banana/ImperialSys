@@ -99,6 +99,10 @@ export function createDataHelpers(source: DataSource) {
       return source.figures.filter((figure) => figure.institutionIds.includes(institutionId));
     },
 
+    getFigureById(id: string): Figure | undefined {
+      return source.figures.find((figure) => figure.id === id);
+    },
+
     getEvents(): EventAtom[] {
       return source.events;
     },

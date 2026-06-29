@@ -11,6 +11,7 @@ import tangInstitutions from '../dynasties/tang/data/institutions.json';
 import tangRelations from '../dynasties/tang/data/relations.json';
 import tangTimelines from '../dynasties/tang/data/timelines.json';
 import tangFigures from '../dynasties/tang/data/figures.json';
+import tangEvents from '../dynasties/tang/data/events.json';
 
 // 每个朝代：原始 JSON（未校验、宽类型）+ 分区叙事配置。
 // loadDynastyData 在收集期就跑全量校验——任何一朝数据坏掉，整套测试直接报错（即数据完整性门）。
@@ -23,6 +24,7 @@ const DYNASTIES = [
       relations: mingRelations.relations,
       timelines: mingTimelines.timelines,
       figures: mingFigures.figures,
+      events: mingEvents.events,
     },
   },
   {
@@ -33,6 +35,7 @@ const DYNASTIES = [
       relations: tangRelations.relations,
       timelines: tangTimelines.timelines,
       figures: tangFigures.figures,
+      events: tangEvents.events,
     },
   },
 ] as const;
@@ -78,6 +81,7 @@ describe('明 · 数据查询行为', () => {
       relations: mingRelations.relations,
       timelines: mingTimelines.timelines,
       figures: mingFigures.figures,
+      events: mingEvents.events,
     },
     '明',
   );
@@ -348,6 +352,7 @@ describe('② figure 扁平升原子（多对多）', () => {
       relations: mingRelations.relations,
       timelines: mingTimelines.timelines,
       figures: mingFigures.figures,
+      events: mingEvents.events,
     },
     '明',
   );
@@ -371,6 +376,11 @@ describe('② figure 扁平升原子（多对多）', () => {
     expect(helpers.getFigures('bingbu').map((f) => f.id)).toContain('yu_qian');
     // 旧的合成后缀 id 不再存在
     expect(ming.figures.map((f) => f.id)).not.toContain('yu_qian_bingbu');
+  });
+
+  it('getFigureById 按 id 取单个 figure（⑥ 抽屉路由用；不存在→undefined）', () => {
+    expect(helpers.getFigureById('yu_qian')?.name).toBe('于谦');
+    expect(helpers.getFigureById('nope')).toBeUndefined();
   });
 
   it('拒绝重复 figure id（扁平后全局唯一）', () => {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef } from 'react';
+import { type ReactNode, useEffect, useMemo, useRef } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { X } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -8,6 +8,9 @@ import FunctionTab from './FunctionTab';
 import TimelineTab from './TimelineTab';
 import FiguresTab from './FiguresTab';
 import RelationsTab from './RelationsTab';
+import FigureDetail from './FigureDetail';
+import EventDetail from './EventDetail';
+import AtomLinks from './AtomLinks';
 import { CATEGORY_COLORS, CATEGORY_LABELS } from '@/platform/constants';
 import { useSelection } from '@/platform/context/SelectionContext';
 import { parseAtomRef } from '@/platform/context/selection';
@@ -15,8 +18,9 @@ import { useDataHelpers } from '@/platform/context/DataHelpersContext';
 import { hasDeepRead } from '@/platform/content/deep-read-map';
 
 /**
- * 详情抽屉：从通用 SelectionContext 读选中态、从 DataHelpers 解析机构。
- * P3 仅消费 institution 原子；其余原子类型（event/figure/concept）由 P5 内容原子系统接管。
+ * 详情抽屉：从通用 SelectionContext 读选中态，按 AtomRef 的 type 路由到各原子视图。
+ * P5 ⑥：institution（机构 Tabs，不变）/ figure / event 均可选中可看；深读 L2 按钮对任意
+ * 命中 MDX map 的原子开放；头部互链 chip 兑现「可被任意处互链」。concept 路由待 ⑦。
  */
 export default function DetailDrawer({ dynastyId }: { dynastyId: string }) {
   const previousFocusRef = useRef<HTMLElement | null>(null);
@@ -31,17 +35,30 @@ export default function DetailDrawer({ dynastyId }: { dynastyId: string }) {
     deepReadOpenRef.current = deepReadRef !== null;
   }, [deepReadRef]);
 
-  const institution = useMemo(() => {
+  // 按 type 解析选中原子（解析不到 → null，抽屉关）。concept 待 ⑦。
+  const resolved = useMemo(() => {
     if (!selectedRef) return null;
     const { type, id } = parseAtomRef(selectedRef);
-    return type === 'institution' ? helpers.getInstitutionById(id) ?? null : null;
+    if (type === 'institution') {
+      const institution = helpers.getInstitutionById(id);
+      return institution ? ({ kind: 'institution', institution } as const) : null;
+    }
+    if (type === 'figure') {
+      const figure = helpers.getFigureById(id);
+      return figure ? ({ kind: 'figure', figure } as const) : null;
+    }
+    if (type === 'event') {
+      const event = helpers.getEventById(id);
+      return event ? ({ kind: 'event', event } as const) : null;
+    }
+    return null;
   }, [selectedRef, helpers]);
 
-  const open = institution !== null;
+  const open = resolved !== null;
   const onClose = clear;
 
   useEffect(() => {
-    if (!open || !institution) {
+    if (!open) {
       return undefined;
     }
 
@@ -66,14 +83,103 @@ export default function DetailDrawer({ dynastyId }: { dynastyId: string }) {
       window.removeEventListener('keydown', onKeyDown);
       previousFocusRef.current?.focus();
     };
-  }, [institution, onClose, open]);
+  }, [selectedRef, onClose, open]);
 
-  if (!institution) {
+  if (!resolved || !selectedRef) {
     return null;
   }
 
-  const palette = CATEGORY_COLORS[institution.category];
-  const canDeepRead = selectedRef ? hasDeepRead(dynastyId, selectedRef) : false;
+  // ── 头部 chrome（按 kind 派生）+ 正文（按 kind 路由）──────────────────
+  const palette = resolved.kind === 'institution' ? CATEGORY_COLORS[resolved.institution.category] : null;
+  const headerBg = palette
+    ? `linear-gradient(160deg, ${palette.bg}, rgba(255,255,255,0.88))`
+    : 'linear-gradient(160deg, var(--vermillion-wash), rgba(255,255,255,0.9))';
+  const titleColor = palette ? palette.text : 'var(--ink-strong)';
+
+  let eyebrow: ReactNode = null;
+  let title = '';
+  let subtitle = '';
+  let links: string[] = [];
+  let body: ReactNode = null;
+
+  if (resolved.kind === 'institution') {
+    const inst = resolved.institution;
+    eyebrow = (
+      <>
+        <span
+          className="inline-flex -rotate-3 items-center justify-center rounded-sm px-2 py-1 text-[11px] uppercase tracking-[0.24em]"
+          style={{ background: palette!.badgeBg, color: palette!.badgeText }}
+        >
+          {CATEGORY_LABELS[inst.category]}
+        </span>
+        <span className="text-xs uppercase tracking-[0.22em] text-[var(--ink-subtle)]">{inst.established}</span>
+      </>
+    );
+    title = inst.name;
+    subtitle = inst.summary;
+    links = inst.links ?? [];
+    body = (
+      <Tabs key={inst.id} defaultValue="function" className="h-full">
+        <TabsList
+          variant="line"
+          className="w-full gap-1 rounded-[18px] border border-black/8 bg-[rgba(255,255,255,0.45)] p-1"
+        >
+          <TabsTrigger value="function" className="rounded-[14px] text-xs">
+            职能与结构
+          </TabsTrigger>
+          <TabsTrigger value="relations" className="rounded-[14px] text-xs">
+            关系网络
+          </TabsTrigger>
+          <TabsTrigger value="timeline" className="rounded-[14px] text-xs">
+            历史演变
+          </TabsTrigger>
+          <TabsTrigger value="figures" className="rounded-[14px] text-xs">
+            代表人物
+          </TabsTrigger>
+        </TabsList>
+
+        <div className="mt-4 h-[calc(100%-3.5rem)] overflow-y-auto pr-1">
+          <TabsContent value="function" className="m-0">
+            <FunctionTab institution={inst} />
+          </TabsContent>
+          <TabsContent value="relations" className="m-0">
+            <RelationsTab institutionId={inst.id} />
+          </TabsContent>
+          <TabsContent value="timeline" className="m-0">
+            <TimelineTab institutionId={inst.id} />
+          </TabsContent>
+          <TabsContent value="figures" className="m-0">
+            <FiguresTab institutionId={inst.id} />
+          </TabsContent>
+        </div>
+      </Tabs>
+    );
+  } else if (resolved.kind === 'figure') {
+    const fig = resolved.figure;
+    eyebrow = (
+      <>
+        <span className="text-sm font-medium text-[var(--ink-muted)]">{fig.title}</span>
+        <span className="text-xs uppercase tracking-[0.22em] text-[var(--ink-subtle)]">{fig.period}</span>
+      </>
+    );
+    title = fig.name;
+    subtitle = fig.evaluation;
+    links = fig.links ?? [];
+    body = <FigureDetail figure={fig} />;
+  } else {
+    const ev = resolved.event;
+    eyebrow = (
+      <span className="text-xs uppercase tracking-[0.22em] text-[var(--ink-subtle)]">
+        {ev.year < 0 ? `公元前 ${-ev.year}` : `${ev.year} 年`}
+      </span>
+    );
+    title = ev.name;
+    subtitle = ev.summary;
+    links = ev.links ?? [];
+    body = <EventDetail event={ev} />;
+  }
+
+  const canDeepRead = hasDeepRead(dynastyId, selectedRef);
 
   return (
     <AnimatePresence>
@@ -91,7 +197,7 @@ export default function DetailDrawer({ dynastyId }: { dynastyId: string }) {
           />
 
           <motion.aside
-            key={institution.id}
+            key={selectedRef}
             ref={drawerRef}
             tabIndex={-1}
             initial={reduceMotion ? false : { x: '100%', opacity: 0.45 }}
@@ -100,31 +206,16 @@ export default function DetailDrawer({ dynastyId }: { dynastyId: string }) {
             transition={{ type: 'spring', stiffness: 280, damping: 28 }}
             className="fixed right-0 top-0 z-50 flex h-full w-[min(480px,92vw)] flex-col border-l border-black/8 bg-[var(--paper)] shadow-[-16px_0_48px_rgba(68,50,31,0.14)] outline-none"
           >
-            <div
-              className="border-b border-black/8 px-6 py-5"
-              style={{
-                background: `linear-gradient(160deg, ${palette.bg}, rgba(255,255,255,0.88))`,
-              }}
-            >
+            <div className="border-b border-black/8 px-6 py-5" style={{ background: headerBg }}>
               <div className="flex items-start justify-between gap-4">
                 <div className="space-y-3">
-                  <div className="flex items-center gap-3">
-                    <span
-                      className="inline-flex -rotate-3 items-center justify-center rounded-sm px-2 py-1 text-[11px] uppercase tracking-[0.24em]"
-                      style={{ background: palette.badgeBg, color: palette.badgeText }}
-                    >
-                      {CATEGORY_LABELS[institution.category]}
-                    </span>
-                    <span className="text-xs uppercase tracking-[0.22em] text-[var(--ink-subtle)]">
-                      {institution.established}
-                    </span>
-                  </div>
+                  <div className="flex items-center gap-3">{eyebrow}</div>
                   <div>
-                    <h2 className="font-heading text-3xl tracking-[0.22em]" style={{ color: palette.text }}>
-                      {institution.name}
+                    <h2 className="font-heading text-3xl tracking-[0.22em]" style={{ color: titleColor }}>
+                      {title}
                     </h2>
-                    <p className="mt-2 text-sm leading-7 text-[var(--ink-muted)]">{institution.summary}</p>
-                    {canDeepRead && selectedRef ? (
+                    <p className="mt-2 text-sm leading-7 text-[var(--ink-muted)]">{subtitle}</p>
+                    {canDeepRead ? (
                       <button
                         type="button"
                         onClick={() => openDeepRead(selectedRef)}
@@ -134,6 +225,7 @@ export default function DetailDrawer({ dynastyId }: { dynastyId: string }) {
                         深读 L2 ↗
                       </button>
                     ) : null}
+                    <AtomLinks label="关联" refs={links} />
                   </div>
                 </div>
 
@@ -147,41 +239,12 @@ export default function DetailDrawer({ dynastyId }: { dynastyId: string }) {
               </div>
             </div>
 
-            <div className="min-h-0 flex-1 px-4 pb-4 pt-4">
-              <Tabs key={institution.id} defaultValue="function" className="h-full">
-                <TabsList
-                  variant="line"
-                  className="w-full gap-1 rounded-[18px] border border-black/8 bg-[rgba(255,255,255,0.45)] p-1"
-                >
-                  <TabsTrigger value="function" className="rounded-[14px] text-xs">
-                    职能与结构
-                  </TabsTrigger>
-                  <TabsTrigger value="relations" className="rounded-[14px] text-xs">
-                    关系网络
-                  </TabsTrigger>
-                  <TabsTrigger value="timeline" className="rounded-[14px] text-xs">
-                    历史演变
-                  </TabsTrigger>
-                  <TabsTrigger value="figures" className="rounded-[14px] text-xs">
-                    代表人物
-                  </TabsTrigger>
-                </TabsList>
-
-                <div className="mt-4 h-[calc(100%-3.5rem)] overflow-y-auto pr-1">
-                  <TabsContent value="function" className="m-0">
-                    <FunctionTab institution={institution} />
-                  </TabsContent>
-                  <TabsContent value="relations" className="m-0">
-                    <RelationsTab institutionId={institution.id} />
-                  </TabsContent>
-                  <TabsContent value="timeline" className="m-0">
-                    <TimelineTab institutionId={institution.id} />
-                  </TabsContent>
-                  <TabsContent value="figures" className="m-0">
-                    <FiguresTab institutionId={institution.id} />
-                  </TabsContent>
-                </div>
-              </Tabs>
+            <div
+              className={`min-h-0 flex-1 px-4 pb-4 pt-4${
+                resolved.kind === 'institution' ? '' : ' overflow-y-auto'
+              }`}
+            >
+              {body}
             </div>
           </motion.aside>
         </>
