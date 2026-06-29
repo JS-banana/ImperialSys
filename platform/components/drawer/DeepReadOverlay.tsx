@@ -21,6 +21,7 @@ export default function DeepReadOverlay({ dynastyId }: { dynastyId: string }) {
   const { deepReadRef, closeDeepRead } = useSelection();
   const reduceMotion = useReducedMotion();
   const panelRef = useRef<HTMLDivElement | null>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
 
   // 经显式 map 取该原子在模块层建好的 lazy 组件（稳定 identity，每原子独立 chunk）。
   const LazyContent = deepReadRef ? getDeepReadComponent(dynastyId, deepReadRef) ?? null : null;
@@ -28,6 +29,9 @@ export default function DeepReadOverlay({ dynastyId }: { dynastyId: string }) {
 
   useEffect(() => {
     if (!open) return undefined;
+    // 记下触发深读的元素（抽屉「深读 L2 ↗」按钮），关闭时复原焦点——免键盘/读屏用户丢上下文。
+    previousFocusRef.current =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     const onKeyDown = (event: KeyboardEvent) => {
@@ -41,6 +45,7 @@ export default function DeepReadOverlay({ dynastyId }: { dynastyId: string }) {
     return () => {
       document.body.style.overflow = originalOverflow;
       window.removeEventListener('keydown', onKeyDown);
+      previousFocusRef.current?.focus(); // 复原焦点到触发按钮
     };
   }, [open, closeDeepRead]);
 
