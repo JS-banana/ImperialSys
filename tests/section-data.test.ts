@@ -7,11 +7,13 @@ import mingRelations from '../dynasties/ming/data/relations.json';
 import mingTimelines from '../dynasties/ming/data/timelines.json';
 import mingFigures from '../dynasties/ming/data/figures.json';
 import mingEvents from '../dynasties/ming/data/events.json';
+import mingConcepts from '../dynasties/ming/data/concepts.json';
 import tangInstitutions from '../dynasties/tang/data/institutions.json';
 import tangRelations from '../dynasties/tang/data/relations.json';
 import tangTimelines from '../dynasties/tang/data/timelines.json';
 import tangFigures from '../dynasties/tang/data/figures.json';
 import tangEvents from '../dynasties/tang/data/events.json';
+import tangConcepts from '../dynasties/tang/data/concepts.json';
 
 // 每个朝代：原始 JSON（未校验、宽类型）+ 分区叙事配置。
 // loadDynastyData 在收集期就跑全量校验——任何一朝数据坏掉，整套测试直接报错（即数据完整性门）。
@@ -25,6 +27,7 @@ const DYNASTIES = [
       timelines: mingTimelines.timelines,
       figures: mingFigures.figures,
       events: mingEvents.events,
+      concepts: mingConcepts.concepts,
     },
   },
   {
@@ -36,6 +39,7 @@ const DYNASTIES = [
       timelines: tangTimelines.timelines,
       figures: tangFigures.figures,
       events: tangEvents.events,
+      concepts: tangConcepts.concepts,
     },
   },
 ] as const;
@@ -82,6 +86,7 @@ describe('明 · 数据查询行为', () => {
       timelines: mingTimelines.timelines,
       figures: mingFigures.figures,
       events: mingEvents.events,
+      concepts: mingConcepts.concepts,
     },
     '明',
   );
@@ -353,6 +358,7 @@ describe('② figure 扁平升原子（多对多）', () => {
       timelines: mingTimelines.timelines,
       figures: mingFigures.figures,
       events: mingEvents.events,
+      concepts: mingConcepts.concepts,
     },
     '明',
   );
@@ -409,6 +415,7 @@ describe('③ event 一等原子', () => {
       timelines: mingTimelines.timelines,
       figures: mingFigures.figures,
       events: mingEvents.events,
+      concepts: mingConcepts.concepts,
     },
     '明',
   );
@@ -426,5 +433,40 @@ describe('③ event 一等原子', () => {
   it('getEventsByInstitution 按机构多对多过滤（土木堡 ∈ 司礼监）', () => {
     expect(helpers.getEventsByInstitution('silijian').map((e) => e.id)).toContain('tumu_crisis');
     expect(helpers.getEventsByInstitution('emperor').map((e) => e.id)).toContain('hu_weiyong_case');
+  });
+});
+
+// ─── ⑦ concept 一等原子（helper + 种子数据）───
+
+describe('⑦ concept 一等原子', () => {
+  const ming = loadDynastyData(
+    {
+      institutions: mingInstitutions.institutions,
+      relations: mingRelations.relations,
+      timelines: mingTimelines.timelines,
+      figures: mingFigures.figures,
+      events: mingEvents.events,
+      concepts: mingConcepts.concepts,
+    },
+    '明',
+  );
+  const helpers = createDataHelpers(ming);
+
+  it('getConcepts 返回全部种子概念', () => {
+    expect(helpers.getConcepts().map((c) => c.id)).toEqual([
+      'zhiheng',
+      'piaoni-pihong',
+      'sanfasi-huishen',
+      'junzheng-fenli',
+    ]);
+  });
+
+  it('getConceptById 按 id 取单个概念（不存在→undefined）', () => {
+    expect(helpers.getConceptById('piaoni-pihong')?.name).toBe('票拟批红');
+    expect(helpers.getConceptById('nope')).toBeUndefined();
+  });
+
+  it('cabinet 互链含 concept:piaoni-pihong（概念在抽屉可达）', () => {
+    expect(helpers.getInstitutionById('cabinet')?.links).toContain('concept:piaoni-pihong');
   });
 });

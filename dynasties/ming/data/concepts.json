@@ -1,0 +1,47 @@
+{
+  "concepts": [
+    {
+      "id": "zhiheng",
+      "name": "权力制衡",
+      "summary": "明代废丞相后，皇帝以「分权而治、以小制大」重构中枢：内阁有议政之权而无裁断之柄，司礼监有用印之权而无草拟之能，科道有纠劾之责而位卑权重。诸权互相牵制、皆系于皇帝一身——这是明代制度设计的总纲。",
+      "institutionIds": ["emperor", "cabinet", "silijian", "duchayuan"],
+      "institutionalRole": "贯穿明代中枢的设计总纲：不立可与皇权抗衡的单一权臣，而以多方互制维持平衡。",
+      "links": ["concept:piaoni-pihong", "concept:sanfasi-huishen", "institution:silijian"]
+    },
+    {
+      "id": "piaoni-pihong",
+      "name": "票拟批红",
+      "summary": "内阁替皇帝草拟处理意见（票拟），司礼监代皇帝朱笔批示（批红）。一拟一批，国家政令于焉成形——内阁有「拟」而无「决」，司礼监有「批」而无「拟」，二者缺一不可，构成明代中枢决策的双轨制衡。",
+      "institutionIds": ["cabinet", "silijian"],
+      "institutionalRole": "明代中枢的核心运作机制：议政权与用印权分立，互为牵制。",
+      "keyMoments": [
+        "票拟之权确立，内阁由顾问渐成中枢",
+        "司礼监代行批红，宦官得以分享相权",
+        "张居正当国，票拟与批红一度合流于首辅之手"
+      ],
+      "links": ["institution:cabinet", "institution:silijian", "event:hu_weiyong_case"],
+      "citations": [
+        { "label": "《明史·职官志一》（内阁）", "url": "https://ctext.org/wiki.pl?if=gb&res=553624", "source": "ctext" }
+      ],
+      "furtherReading": [
+        { "label": "维基百科：票拟", "url": "https://zh.wikipedia.org/wiki/票拟", "source": "wikipedia" }
+      ]
+    },
+    {
+      "id": "sanfasi-huishen",
+      "name": "三法司会审",
+      "summary": "重大案件由刑部、大理寺、都察院三司会同审理：刑部主审判、大理寺掌复核驳正、都察院司监察纠劾。三权分立而又会同定谳，互相制约，以防一司独断、冤狱横生。",
+      "institutionIds": ["xingbu", "dalisi", "duchayuan"],
+      "institutionalRole": "司法领域的分权制衡：审、核、纠三权分立，会同定谳。",
+      "links": ["institution:xingbu", "institution:dalisi", "institution:duchayuan"]
+    },
+    {
+      "id": "junzheng-fenli",
+      "name": "军政分离",
+      "summary": "兵部掌军令、铨选与调遣之政，五军都督府掌军籍与统兵之权——有调兵之权者不统兵，有统兵之权者不得擅调。平时分立、战时奉旨而合，以杜绝武将拥兵自重。",
+      "institutionIds": ["bingbu", "wujun"],
+      "institutionalRole": "军事领域的分权制衡：调兵权与统兵权分立，互不统属。",
+      "links": ["institution:bingbu", "institution:wujun", "event:tumu_crisis"]
+    }
+  ]
+}

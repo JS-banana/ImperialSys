@@ -10,6 +10,7 @@ import FiguresTab from './FiguresTab';
 import RelationsTab from './RelationsTab';
 import FigureDetail from './FigureDetail';
 import EventDetail from './EventDetail';
+import ConceptDetail from './ConceptDetail';
 import AtomLinks from './AtomLinks';
 import { CATEGORY_COLORS, CATEGORY_LABELS } from '@/platform/constants';
 import { useSelection } from '@/platform/context/SelectionContext';
@@ -50,6 +51,10 @@ export default function DetailDrawer({ dynastyId }: { dynastyId: string }) {
     if (type === 'event') {
       const event = helpers.getEventById(id);
       return event ? ({ kind: 'event', event } as const) : null;
+    }
+    if (type === 'concept') {
+      const concept = helpers.getConceptById(id);
+      return concept ? ({ kind: 'concept', concept } as const) : null;
     }
     return null;
   }, [selectedRef, helpers]);
@@ -166,7 +171,7 @@ export default function DetailDrawer({ dynastyId }: { dynastyId: string }) {
     subtitle = fig.evaluation;
     links = fig.links ?? [];
     body = <FigureDetail figure={fig} />;
-  } else {
+  } else if (resolved.kind === 'event') {
     const ev = resolved.event;
     eyebrow = (
       <span className="text-xs uppercase tracking-[0.22em] text-[var(--ink-subtle)]">
@@ -177,6 +182,15 @@ export default function DetailDrawer({ dynastyId }: { dynastyId: string }) {
     subtitle = ev.summary;
     links = ev.links ?? [];
     body = <EventDetail event={ev} />;
+  } else {
+    const concept = resolved.concept;
+    eyebrow = (
+      <span className="text-xs uppercase tracking-[0.22em] text-[var(--ink-subtle)]">概念</span>
+    );
+    title = concept.name;
+    subtitle = concept.summary;
+    links = concept.links ?? [];
+    body = <ConceptDetail concept={concept} />;
   }
 
   const canDeepRead = hasDeepRead(dynastyId, selectedRef);

@@ -7,6 +7,7 @@ export type {
   TimelineEvent,
   Figure,
   EventAtom,
+  ConceptAtom,
 } from './institution';
 
 export type { ExternalRef, DepthContract } from './atom';

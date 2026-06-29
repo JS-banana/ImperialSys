@@ -6,6 +6,7 @@ import relationsData from './data/relations.json';
 import timelinesData from './data/timelines.json';
 import figuresData from './data/figures.json';
 import eventsData from './data/events.json';
+import conceptsData from './data/concepts.json';
 
 export function getTangDynastyData(): DynastyData {
   // 经 loader 校验：数据完整性成构建期硬门，返回精确类型（无需 as 强转）
@@ -16,6 +17,7 @@ export function getTangDynastyData(): DynastyData {
       timelines: timelinesData.timelines,
       figures: figuresData.figures,
       events: eventsData.events,
+      concepts: conceptsData.concepts,
     },
     '唐',
   );

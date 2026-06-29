@@ -14,6 +14,7 @@ type LazyMdx = ComponentType;
 export const DEEP_READ: Record<string, Record<string, LazyMdx>> = {
   ming: {
     'institution:cabinet': lazy(() => import('@/dynasties/ming/content/institution/cabinet.mdx')),
+    'concept:piaoni-pihong': lazy(() => import('@/dynasties/ming/content/concept/piaoni-pihong.mdx')),
   },
 };
 

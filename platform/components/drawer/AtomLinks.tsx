@@ -36,7 +36,9 @@ export default function AtomLinks({ label, refs }: { label: string; refs: string
           ? helpers.getFigureById(id)?.name
           : type === 'event'
             ? helpers.getEventById(id)?.name
-            : undefined; // concept 待 ⑦ 接 getConceptById
+            : type === 'concept'
+              ? helpers.getConceptById(id)?.name
+              : undefined;
     return name ? [{ ref, type, name }] : [];
   });
 

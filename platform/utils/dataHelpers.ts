@@ -1,4 +1,4 @@
-import type { Institution, TimelineEvent, Figure, EventAtom } from '../types/institution';
+import type { Institution, TimelineEvent, Figure, EventAtom, ConceptAtom } from '../types/institution';
 import type { Relation } from '../types/relation';
 import type { SectionConfig } from '../types/dynasty';
 
@@ -10,6 +10,7 @@ export interface DataSource {
   timelines: Record<string, TimelineEvent[]>;
   figures: Figure[];
   events: EventAtom[];
+  concepts: ConceptAtom[];
 }
 
 // ─── 创建数据查询工具（工厂模式，支持任意数据源）────────────────
@@ -113,6 +114,14 @@ export function createDataHelpers(source: DataSource) {
 
     getEventsByInstitution(institutionId: string): EventAtom[] {
       return source.events.filter((event) => event.institutionIds.includes(institutionId));
+    },
+
+    getConcepts(): ConceptAtom[] {
+      return source.concepts;
+    },
+
+    getConceptById(id: string): ConceptAtom | undefined {
+      return source.concepts.find((concept) => concept.id === id);
     },
 
     getDataSource(): DataSource {

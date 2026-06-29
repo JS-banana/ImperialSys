@@ -8,6 +8,7 @@ const validRefs = new Set<string>([
   ...ming.institutions.map((i) => `institution:${i.id}`),
   ...ming.figures.map((f) => `figure:${f.id}`),
   ...ming.events.map((e) => `event:${e.id}`),
+  ...ming.concepts.map((c) => `concept:${c.id}`),
 ]);
 
 describe('deep-read 模块 map 覆盖', () => {
@@ -21,5 +22,10 @@ describe('deep-read 模块 map 覆盖', () => {
     expect(hasDeepRead('ming', 'institution:cabinet')).toBe(true);
     expect(hasDeepRead('ming', 'institution:silijian')).toBe(false);
     expect(hasDeepRead('tang', 'institution:cabinet')).toBe(false);
+  });
+
+  it('⑦：票拟批红 concept 有 L2（新增 L2 = map 加一行）', () => {
+    expect(hasDeepRead('ming', 'concept:piaoni-pihong')).toBe(true);
+    expect(hasDeepRead('ming', 'concept:zhiheng')).toBe(false);
   });
 });

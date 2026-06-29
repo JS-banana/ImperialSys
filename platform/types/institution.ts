@@ -69,3 +69,11 @@ export interface EventAtom extends DepthContract {
   institutionIds: string[];
   tags: string[];
 }
+
+// 概念（一等原子：贯穿制度的抽象概念，如制衡 / 票拟批红 / 三法司会审 / 军政分离）
+export interface ConceptAtom extends DepthContract {
+  id: string;
+  name: string;
+  summary: string;
+  institutionIds: string[];
+}
